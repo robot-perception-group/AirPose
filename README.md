@@ -9,7 +9,8 @@ Check the teaser [video](https://www.youtube.com/watch?v=gUKMepNm-HQ/)
 This repository contains the code of _AirPose_ a novel markerless 3D human motion capture (MoCap) system for unstructured, outdoor environments that uses a team of autonomous unmanned aerialvehicles (UAVs) with on-board RGB cameras and computation.
 _________
 
-Data can be freely accessed [here]()
+Data can be freely accessed [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/)
+Please download the data, and untar it.
 
 _________
 
@@ -21,6 +22,8 @@ Please get `smplx` code requesting access [here](https://smpl.is.tue.mpg.de/) an
 Install the necessary requirements with `pip install -r requirements.txt`
 
 ## Synthetic data training 
+
+The data to be used is `copenet_synthetic.tar.gz`
 
 `cd AirPose/copenet/src/copenet`
 
