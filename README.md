@@ -14,3 +14,8 @@ Data can be freely accessed [here]()
 _________
 
 To run the code of this repository you first need to download the data.
+The code was tested using `Python 3.8`.
+
+Please get `smplx` code requesting access [here](https://smpl.is.tue.mpg.de/) and place it in `copenet/src/copenet` and install it `python install -e smplx`.
+
+Install the necessary requirements with `pip install -r requirements.txt`
