@@ -1,0 +1,12 @@
+catkin-pkg==0.4.24
+dataclasses==0.8
+distro==1.6.0
+meshcat==0.3.2
+Pillow==8.4.0
+pkg-resources==0.0.0
+pyngrok==5.1.0
+rospkg==1.3.0
+torch==1.10.0
+torchgeometry==0.1.2
+typing-extensions==4.0.0
+u-msgpack-python==2.7.1
