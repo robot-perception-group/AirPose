@@ -19,3 +19,13 @@ The code was tested using `Python 3.8`.
 Please get `smplx` code requesting access [here](https://smpl.is.tue.mpg.de/) and place it in `copenet/src/copenet` and install it `python install -e smplx`.
 
 Install the necessary requirements with `pip install -r requirements.txt`
+
+## Synthetic data training 
+`cd copenet`
+`ln -s . copenet`
+And code can be run by the following
+`python copenet_trainer.py --name=test_name --version=test_version --model=muhmr --datapath=path/location --log_dir=path/location/ --optional-params...`
+
+The `datapath` is the location of the training data.
+`--model` specify the model type between `[muhmr, copenet_twoview]`
+Logs will be saved in `$log_dir/$name/$version/`
