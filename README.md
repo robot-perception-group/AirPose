@@ -9,7 +9,7 @@ Check the teaser [video](https://www.youtube.com/watch?v=gUKMepNm-HQ/)
 This repository contains the code of _AirPose_ a novel markerless 3D human motion capture (MoCap) system for unstructured, outdoor environments that uses a team of autonomous unmanned aerialvehicles (UAVs) with on-board RGB cameras and computation.
 _________
 
-Data can be freely accessed [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/)
+Data can be freely accessed [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/).
 Please download the data, and untar it.
 
 _________
@@ -38,3 +38,5 @@ The `datapath` is the location of the training data.
 `--model` specify the model type between `[muhmr, copenet_twoview]`
 
 Logs will be saved in `$log_dir/$name/$version/`
+
+`optional-params` is to be substituted with the `copenet_trainer` available params as weights, lr..
