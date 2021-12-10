@@ -22,7 +22,7 @@ Install the necessary requirements with `pip install -r requirements.txt`
 
 ## Synthetic data training 
 
-`cd copenet`
+`cd AirPose/copenet/src/copenet`
 
 `ln -s . copenet`
 
