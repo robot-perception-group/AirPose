@@ -1,0 +1,4 @@
+[submodule "aircap"]
+	path = aircap
+	url = https://github.com/robot-perception-group/AirCap.git
+	branch = realworld-airpose
