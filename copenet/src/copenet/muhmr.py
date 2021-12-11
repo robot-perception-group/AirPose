@@ -475,7 +475,6 @@ class muhmr(pl.LightningModule):
             x["output"]["gt_smpltrans1"]).cpu().numpy() for x in outputs[1]]).reshape(-1,3)
         mean_train_err_smpltrans1 = np.mean(np.sqrt(np.sum(train_err_smpltrans1**2,1)))
 
-        import ipdb;ipdb.set_trace()
 
         smplpose_rotmat = torch.stack([x["output"]["smplpose_rotmat"].to("cuda") for x in outputs[0]])
         smplorient_rel0 = torch.stack([x["output"]["smplorient_rel0"].to("cuda") for x in outputs[0]])  
@@ -512,10 +511,10 @@ class muhmr(pl.LightningModule):
         j3d = np.stack(joints3d).reshape(-1,4,127,3)[:,:,:22]
         print("test_mpjpe0: {}".format(np.mean(np.sqrt(np.sum((j3d[:,0] - j3d[:,2])**2,2))[:,:22])))
         print("test_mpjpe1: {}".format(np.mean(np.sqrt(np.sum((j3d[:,1] - j3d[:,3])**2,2))[:,:22])))
-        print("test_mpe00: {}".format(mean_test_err_smpltrans0))
+        print("test_mpe0: {}".format(mean_test_err_smpltrans0))
         print("test_mpe1: {}".format(mean_train_err_smpltrans0))
-        import ipdb; ipdb.set_trace()
-        # return {"outputs":outputs}
+        # import pdb; pdb.set_trace()
+        return {"outputs":outputs}
 
 
     @staticmethod

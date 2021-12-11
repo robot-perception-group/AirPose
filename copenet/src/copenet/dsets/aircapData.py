@@ -5,15 +5,14 @@ import logging
 import pickle as pk
 from torch.utils.data import Dataset
 from torchvision import transforms
-import h5py
 import cv2
 import numpy as np
 import sys
-from smplx import lbs
+from ..smplx.smplx import lbs
 import torchgeometry as tgm
-from utils.utils import npPerspProj, resize_with_pad, get_weak_persp_cam_full_img_input, get_weak_persp_cam_full_img_gt, transform_smpl
+from ..utils.utils import npPerspProj, resize_with_pad, get_weak_persp_cam_full_img_input, get_weak_persp_cam_full_img_gt, transform_smpl
 import torch
-import constants as CONSTANTS
+from .. import constants as CONSTANTS
 import copy
 
 sys.path.append("/is/ps3/nsaini/AirCap_WS/aerial-pose-tracker/aerial_pose")

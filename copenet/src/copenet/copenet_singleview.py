@@ -231,7 +231,9 @@ class copenet_singleview(pl.LightningModule):
                         'pred_smpltrans': pred_smpltrans.detach().cpu(),
                         'in_smpltrans': in_smpltrans.detach().cpu(),
                         "gt_angles": gt_angles.detach().cpu(),
-                        'gt_smpltrans': gt_smpltrans_rel.detach().cpu()}
+                        'gt_smpltrans': gt_smpltrans_rel.detach().cpu(),
+                        'smplorient_rel0': input_batch['smplorient_rel0'].detach().cpu(),
+                        'smplpose_rotmat': input_batch['smplpose_rotmat'].detach().cpu()}
         else:
             loss, losses = self.get_loss(input_batch,
                                 pred_smpltrans,
@@ -388,31 +390,52 @@ class copenet_singleview(pl.LightningModule):
                 "output" : output}
 
     def test_epoch_end(self, outputs):
-        # OPTIONAL
+        global smplx
         test_err_smpltrans = np.array([(x["output"]["pred_smpltrans"] - 
             x["output"]["gt_smpltrans"]).cpu().numpy() for x in outputs[0]]).reshape(-1,3)
-        test_err_smplangles = np.array([(x["output"]["pred_angles"] - 
-            x["output"]["gt_angles"]).cpu().numpy() for x in outputs[0]]).reshape(-1,22,3)
-
         mean_test_err_smpltrans = np.mean(np.sqrt(np.sum(test_err_smpltrans**2,1)))
-        mean_test_err_smplangles = np.mean(np.sqrt(np.sum(test_err_smplangles**2,2)))
 
         train_err_smpltrans = np.array([(x["output"]["pred_smpltrans"] - 
             x["output"]["gt_smpltrans"]).cpu().numpy() for x in outputs[1]]).reshape(-1,3)
-        train_err_smplangles = np.array([(x["output"]["pred_angles"] - 
-            x["output"]["gt_angles"]).cpu().numpy() for x in outputs[1]]).reshape(-1,22,3)
-
         mean_train_err_smpltrans = np.mean(np.sqrt(np.sum(train_err_smpltrans**2,1)))
-        mean_train_err_smplangles = np.mean(np.sqrt(np.sum(train_err_smplangles**2,2)))
 
 
-        print("mean_test_err_smpltrans: {}".format(mean_test_err_smpltrans))
-        print("mean_test_err_smplangles: {}".format(mean_test_err_smplangles))
-        print("mean_train_err_smpltrans: {}".format(mean_train_err_smpltrans))
-        print("mean_train_err_smplangles: {}".format(mean_train_err_smplangles))
+        smplpose_rotmat = torch.stack([x["output"]["smplpose_rotmat"].to("cuda") for x in outputs[0]])
+        smplorient_rel = torch.stack([x["output"]["smplorient_rel"].to("cuda") for x in outputs[0]])
 
-        import ipdb; ipdb.set_trace()
-        # return {"outputs":outputs}
+        pred_angles_test = torch.cat([x["output"]["pred_angles"].to("cuda") for x in outputs[0]])
+        pred_rotmat_test = tgm.angle_axis_to_rotation_matrix(pred_angles_test.view(-1,3)).view(smplpose_rotmat.shape[0],smplpose_rotmat.shape[1],22,4,4)
+
+        # pred_angles0_train = torch.cat([x["output"]["pred_angles0"].to("cuda") for x in outputs[1]])
+        # pred_angles1_train = torch.cat([x["output"]["pred_angles1"].to("cuda") for x in outputs[1]])
+        # pred_rotmat0_train = tgm.angle_axis_to_rotation_matrix(pred_angles0_train.view(-1,3)).view(pred_angles0_train.shape[0],22,4,4)
+        # pred_rotmat1_train = tgm.angle_axis_to_rotation_matrix(pred_angles1_train.view(-1,3)).view(pred_angles1_train.shape[0],22,4,4)
+    
+
+        joints3d = []
+        from tqdm import tqdm
+        for i in tqdm(range(smplpose_rotmat.shape[0])):
+            out_gt = smplx.forward(body_pose=smplpose_rotmat[i],
+                                    global_orient= smplorient_rel[i],pose2rot=False)
+            out_pred = smplx.forward(body_pose=pred_rotmat_test[i,:,1:22,:3,:3],
+                                    global_orient= pred_rotmat_test[i,:,0:1,:3,:3],pose2rot=False)
+            
+            joints3d.append(np.stack([out_gt.joints.detach().cpu().numpy(),
+                        out_pred.joints.detach().cpu().numpy()]).transpose(1,0,2,3))
+
+        j3d = np.stack(joints3d).reshape(-1,4,127,3)[:,:,:22]
+        print("test_mpjpe0: {}".format(np.mean(np.sqrt(np.sum((j3d[:,0] - j3d[:,2])**2,2))[:,:22])))
+        print("test_mpjpe1: {}".format(np.mean(np.sqrt(np.sum((j3d[:,1] - j3d[:,3])**2,2))[:,:22])))
+        print("test_mpe0: {}".format(mean_test_err_smpltrans))
+        print("test_mpe1: {}".format(mean_train_err_smpltrans))
+
+        # print("train_mpe00: {}".format(mean_test_err_smpltrans1))
+        # print("train_mpjpe0: {}".format(mean_test_err_smplangles1))
+        # print("train_mpe1: {}".format(mean_train_err_smpltrans1))
+        # print("train_mpjpe1: {}".format(mean_train_err_smplangles1))
+
+        # import ipdb; ipdb.set_trace()
+        return {"outputs":outputs}
 
 
     @staticmethod

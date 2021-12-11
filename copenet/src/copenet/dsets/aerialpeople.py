@@ -4,17 +4,16 @@ import os
 import pickle as pk
 from torch.utils.data import Dataset
 from torchvision import transforms
-import h5py
 import cv2
 import numpy as np
 import sys
-from smplx import SMPLX, lbs
-import config
+from ..smplx.smplx import SMPLX, lbs
+from .. import config
 import torchgeometry as tgm
-from utils.utils import npPerspProj, resize_with_pad, get_weak_persp_cam_full_img_input, get_weak_persp_cam_full_img_gt, transform_smpl
+from ..utils.utils import npPerspProj, resize_with_pad, get_weak_persp_cam_full_img_input, get_weak_persp_cam_full_img_gt, transform_smpl
 import torch
-from utils.geometry import batch_rodrigues, perspective_projection, estimate_translation, rot6d_to_rotmat
-import constants as CONSTANTS
+from ..utils.geometry import batch_rodrigues, perspective_projection, estimate_translation, rot6d_to_rotmat
+from .. import constants as CONSTANTS
 import imgaug.augmenters as iaa
 import random
 

@@ -13,19 +13,22 @@ os.environ["PYOPENGL_PLATFORM"] = 'egl'
 from copenet_real.copenet_twoview import copenet_twoview
 from copenet_real.dsets import copenet_real
 
+import sys
+fname = sys.argv[1]
+datapath = sys.argv[2]
 
-# ckpt_path = "/is/ps3/nsaini/projects/copenet_real/copenet_logs/copenet_twoview/version_5_cont_limbwght/checkpoints/epoch=761.ckpt"
-ckpt_path = "/is/cluster/nsaini/copenet_logs/copenet_twoview_newcorrectedruns/copenet_twoview_newcorrectedruns/checkpoints/epoch-257.ckpt"
-datapath = "/home/nsaini/Datasets/copenet_data/"
-# check model type
-model_type = ckpt_path.split("/")[-4]
+# # ckpt_path = "/is/ps3/nsaini/projects/copenet_real/copenet_logs/copenet_twoview/version_5_cont_limbwght/checkpoints/epoch=761.ckpt"
+# ckpt_path = "/is/cluster/nsaini/copenet_logs/copenet_twoview_newcorrectedruns/copenet_twoview_newcorrectedruns/checkpoints/epoch-257.ckpt"
+# datapath = "/home/nsaini/Datasets/copenet_data/"
+# # check model type
+# model_type = ckpt_path.split("/")[-4]
 
-# create trainer
-trainer = Trainer(gpus=1)
-# create Network
+# # create trainer
+# trainer = Trainer(gpus=1)
+# # create Network
 
 
-net = copenet_twoview.load_from_checkpoint(checkpoint_path=ckpt_path)
+# net = copenet_twoview.load_from_checkpoint(checkpoint_path=ckpt_path)
 
 # create dataset and dataloader
 train_ds, test_ds = copenet_real.get_copenet_real_traintest(datapath)
@@ -50,7 +53,8 @@ trn_dl = DataLoader(train_ds, batch_size=30,
 
 # %%
 # fname = "/is/ps3/nsaini/projects/copenet_real/copenet_logs/copenet_twoview/version_5_cont_limbwght/checkpoints/epoch=761.pkl"
-fname = "/is/cluster/nsaini/copenet_logs/copenet_twoview_newcorrectedruns/copenet_twoview_newcorrectedruns/checkpoints/epoch-257.pkl"
+# fname = "/is/cluster/nsaini/copenet_logs/copenet_twoview_newcorrectedruns/copenet_twoview_newcorrectedruns/checkpoints/epoch-257.pkl"
+fname = os.path.join(fname,"epoch-257.pkl")
 
 import os
 os.environ["PYOPENGL_PLATFORM"] = 'egl'

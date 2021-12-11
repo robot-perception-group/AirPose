@@ -13,19 +13,22 @@ os.environ["PYOPENGL_PLATFORM"] = 'egl'
 from copenet_real.hmr import hmr
 from copenet_real.dsets import copenet_real
 
+import sys
+fname = sys.argv[1]
+datapath = sys.argv[2]
 
-ckpt_path = "/is/ps3/nsaini/projects/copenet_real/copenet_logs/hmr/version_2_from_newlytrinedckpt/checkpoints/epoch=388.ckpt"
-datapath = "/home/nsaini/Datasets/copenet_data/"
-# check model type
-model_type = ckpt_path.split("/")[-4]
+# ckpt_path = "/is/ps3/nsaini/projects/copenet_real/copenet_logs/hmr/version_2_from_newlytrinedckpt/checkpoints/epoch=388.ckpt"
+# datapath = "/home/nsaini/Datasets/copenet_data/"
+# # check model type
+# model_type = ckpt_path.split("/")[-4]
 
-# create trainer
-trainer = Trainer(gpus=1)
-# create Network
+# # create trainer
+# trainer = Trainer(gpus=1)
+# # create Network
 
 
-net0 = hmr.load_from_checkpoint(checkpoint_path=ckpt_path)
-net1 = hmr.load_from_checkpoint(checkpoint_path=ckpt_path)
+# net0 = hmr.load_from_checkpoint(checkpoint_path=ckpt_path)
+# net1 = hmr.load_from_checkpoint(checkpoint_path=ckpt_path)
 
 # create dataset and dataloader
 train_ds, test_ds = copenet_real.get_copenet_real_traintest(datapath)
@@ -60,7 +63,8 @@ trn_dl1 = DataLoader(train_ds_1, batch_size=30,
 
 
 # %%
-fname = "/is/ps3/nsaini/projects/copenet_real/copenet_logs/hmr/version_2_from_newlytrinedckpt/checkpoints/epoch=388.pkl"
+# fname = "/is/ps3/nsaini/projects/copenet_real/copenet_logs/hmr/version_2_from_newlytrinedckpt/checkpoints/epoch=388.pkl"
+fname = os.path.join(fname,"epoch=388.pkl")
 fname0 = fname + "0"
 fname1 = fname + "1"
 
@@ -138,7 +142,7 @@ pred_angles1_test = torch.cat([i["output"]["pred_angles"].to("cuda") for i in re
 pred_rotmat0_test = tgm.angle_axis_to_rotation_matrix(pred_angles0_test.view(-1,3)).view(pred_angles0_test.shape[0],22,4,4)
 pred_rotmat1_test = tgm.angle_axis_to_rotation_matrix(pred_angles1_test.view(-1,3)).view(pred_angles1_test.shape[0],22,4,4)
 
-import ipdb;ipdb.set_trace()
+# import ipdb;ipdb.set_trace()
 ###########################
 robust_idcs = (pred_smpltrans0_test_hmr[:,2] < 25).detach().cpu().numpy()
 fig,ax = plt.subplots(3,1,sharex=True)
@@ -180,55 +184,56 @@ ax[2].legend(["Baseline","AirPose","AirPose$^+$"],markerscale=10)
 ax[2].xaxis.set_label_text("frame number",{"fontsize":"large","fontweight":"bold"})
 plt.subplots_adjust(wspace=0, hspace=0.02)
 ###########################
+plt.show()
 
-pred_vertices_cam0_test_wrt_origin,pred_j3d_cam0_test_wrt_origin,pred_orient0_wrt_origin, pred_trans0_wrt_origin \
-        = transform_smpl(torch.inverse(test_extr0[begin*batch_size:batch_size*(end-begin)]),pred_vertices_cam0_test,pred_j3d_cam0_test,pred_rotmat0_test[begin*batch_size:batch_size*(end-begin),1,:3,:3],pred_smpltrans0_test)
-pred_vertices_cam1_test_wrt_origin,pred_j3d_cam1_test_wrt_origin,pred_orient1_wrt_origin, pred_trans1_wrt_origin \
-        = transform_smpl(torch.inverse(test_extr1[begin*batch_size:batch_size*(end-begin)]),pred_vertices_cam1_test,pred_j3d_cam1_test,pred_rotmat1_test[begin*batch_size:batch_size*(end-begin),1,:3,:3],pred_smpltrans1_test)
+# pred_vertices_cam0_test_wrt_origin,pred_j3d_cam0_test_wrt_origin,pred_orient0_wrt_origin, pred_trans0_wrt_origin \
+#         = transform_smpl(torch.inverse(test_extr0[begin*batch_size:batch_size*(end-begin)]),pred_vertices_cam0_test,pred_j3d_cam0_test,pred_rotmat0_test[begin*batch_size:batch_size*(end-begin),1,:3,:3],pred_smpltrans0_test)
+# pred_vertices_cam1_test_wrt_origin,pred_j3d_cam1_test_wrt_origin,pred_orient1_wrt_origin, pred_trans1_wrt_origin \
+#         = transform_smpl(torch.inverse(test_extr1[begin*batch_size:batch_size*(end-begin)]),pred_vertices_cam1_test,pred_j3d_cam1_test,pred_rotmat1_test[begin*batch_size:batch_size*(end-begin),1,:3,:3],pred_smpltrans1_test)
     
 
-person_present = np.sum(test_ds.opose[:,:,:,2],axis=2)==0
-person_present = ~(person_present[0]*person_present[1])[:pred_betas0.shape[0]]
-err_idcs = np.load("/is/ps3/nsaini/projects/copenet_real/src/copenet_real/scripts/err_idcs.npy")
-torch.sqrt(torch.sum(((pred_j3d_cam0_test_wrt_origin-pred_trans0_wrt_origin.unsqueeze(1))[err_idcs] - 
-        (pred_j3d_cam1_test_wrt_origin-pred_trans1_wrt_origin.unsqueeze(1))[err_idcs])**2,dim=2)).mean()
+# person_present = np.sum(test_ds.opose[:,:,:,2],axis=2)==0
+# person_present = ~(person_present[0]*person_present[1])[:pred_betas0.shape[0]]
+# err_idcs = np.load("/is/ps3/nsaini/projects/copenet_real/src/copenet_real/scripts/err_idcs.npy")
+# torch.sqrt(torch.sum(((pred_j3d_cam0_test_wrt_origin-pred_trans0_wrt_origin.unsqueeze(1))[err_idcs] - 
+#         (pred_j3d_cam1_test_wrt_origin-pred_trans1_wrt_origin.unsqueeze(1))[err_idcs])**2,dim=2)).mean()
 
-# %%
-# import cv2
-# import random
-# # samples = random.sample(range(begin*batch_size,batch_size*(end-begin)),5)
-# samples = [1520,2080,2690,3415,3832]
-# ims0 = torch.from_numpy(np.stack([cv2.imread(f)[:,:,::-1]/255. for f in images0[samples]])).permute(0,3,1,2)
-# ims1 = torch.from_numpy(np.stack([cv2.imread(f)[:,:,::-1]/255. for f in images1[samples]])).permute(0,3,1,2)
+# # %%
+# # import cv2
+# # import random
+# # # samples = random.sample(range(begin*batch_size,batch_size*(end-begin)),5)
+# # samples = [1520,2080,2690,3415,3832]
+# # ims0 = torch.from_numpy(np.stack([cv2.imread(f)[:,:,::-1]/255. for f in images0[samples]])).permute(0,3,1,2)
+# # ims1 = torch.from_numpy(np.stack([cv2.imread(f)[:,:,::-1]/255. for f in images1[samples]])).permute(0,3,1,2)
 
-# rend_ims0 = real_renderer0.visualize_tb(pred_vertices_cam0_test[samples],
-#                         torch.zeros(len(samples),3).float().to("cuda"),
-#                         torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to("cuda"),
-#                         ims0)
-# rend_ims1 = real_renderer1.visualize_tb(pred_vertices_cam1_test[samples],
-#                         torch.zeros(len(samples),3).float().to("cuda"),
-#                         torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to("cuda"),
-#                         ims1)
+# # rend_ims0 = real_renderer0.visualize_tb(pred_vertices_cam0_test[samples],
+# #                         torch.zeros(len(samples),3).float().to("cuda"),
+# #                         torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to("cuda"),
+# #                         ims0)
+# # rend_ims1 = real_renderer1.visualize_tb(pred_vertices_cam1_test[samples],
+# #                         torch.zeros(len(samples),3).float().to("cuda"),
+# #                         torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to("cuda"),
+# #                         ims1)
 
-# for_blender_cam0 = pred_vertices_cam0_test_wrt_origin[samples]
-# for_blender_cam1 = pred_vertices_cam1_test_wrt_origin[samples]
+# # for_blender_cam0 = pred_vertices_cam0_test_wrt_origin[samples]
+# # for_blender_cam1 = pred_vertices_cam1_test_wrt_origin[samples]
 
-# %%
-import meshcat
-import meshcat.geometry as g
-import meshcat.transformations as tf
-from tqdm import tqdm
+# # %%
+# import meshcat
+# import meshcat.geometry as g
+# import meshcat.transformations as tf
+# from tqdm import tqdm
 
-# Create a new visualizer
-vis = meshcat.Visualizer()
+# # Create a new visualizer
+# vis = meshcat.Visualizer()
 
-temp_extr0 = test_extr0.detach().clone()
-temp_extr0[1:] = temp_extr0[0]
-pred_vertices_cam0_test_wrt_origin_temp,_,_, _ \
-        = transform_smpl(torch.inverse(temp_extr0[:6990]),pred_vertices_cam0_test)
+# temp_extr0 = test_extr0.detach().clone()
+# temp_extr0[1:] = temp_extr0[0]
+# pred_vertices_cam0_test_wrt_origin_temp,_,_, _ \
+#         = transform_smpl(torch.inverse(temp_extr0[:6990]),pred_vertices_cam0_test)
 
-for i in tqdm(range(pred_vertices_cam0_test_wrt_origin_temp.shape[0])):
-    vis["mesh1"].set_object(g.TriangularMeshGeometry(pred_vertices_cam0_test_wrt_origin_temp[i].cpu().numpy(),smplx.faces),
-                        g.MeshLambertMaterial(
-                             color=0xff22dd,
-                             reflectivity=0.8))
+# for i in tqdm(range(pred_vertices_cam0_test_wrt_origin_temp.shape[0])):
+#     vis["mesh1"].set_object(g.TriangularMeshGeometry(pred_vertices_cam0_test_wrt_origin_temp[i].cpu().numpy(),smplx.faces),
+#                         g.MeshLambertMaterial(
+#                              color=0xff22dd,
+#                              reflectivity=0.8))

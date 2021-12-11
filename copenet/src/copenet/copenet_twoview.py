@@ -596,8 +596,8 @@ class copenet_twoview(pl.LightningModule):
         # print("train_mpe1: {}".format(mean_train_err_smpltrans1))
         # print("train_mpjpe1: {}".format(mean_train_err_smplangles1))
 
-        import ipdb; ipdb.set_trace()
-        # return {"outputs":outputs}
+        # import ipdb; ipdb.set_trace()
+        return {"outputs":outputs}
 
 
     def viz_3d(self,batch,output,viz_idx=[0]):

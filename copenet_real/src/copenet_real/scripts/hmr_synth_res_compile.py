@@ -7,25 +7,40 @@ from pytorch_lightning import Trainer
 from tqdm import tqdm
 import pickle as pkl
 import os
+import sys
+import yaml
 os.environ["PYOPENGL_PLATFORM"] = 'egl'
 
 
 from copenet.hmr import hmr
+from copenet.copenet_singleview import copenet_singleview
 from copenet_real.dsets import aerialpeople
 
+modeltype = sys.argv[1]
+fname = sys.argv[2]
+datapath = sys.argv[3]
 
-ckpt_path = "/is/ps3/nsaini/projects/copenet/copenet_logs/hmr/version_1_camswaps_correctcam/final.ckpt"
-datapath = "/home/nsaini/Datasets/AerialPeople/agora_copenet_uniform_new_cropped/"
-# check model type
-model_type = ckpt_path.split("/")[-4]
+# model = sys.argv[1]
+# ckpt_path = sys.argv[2]
+# datapath = sys.argv[3]
+# # ckpt_path = "/is/ps3/nsaini/projects/copenet/copenet_logs/hmr/version_1_camswaps_correctcam/final.ckpt"
+# # datapath = "/home/nsaini/Datasets/AerialPeople/agora_copenet_uniform_new_cropped/"
+# # check model type
+# model_type = ckpt_path.split("/")[-4]
 
-# create trainer
-trainer = Trainer(gpus=1)
-# create Network
-
-
-net0 = hmr.load_from_checkpoint(checkpoint_path=ckpt_path)
-net1 = hmr.load_from_checkpoint(checkpoint_path=ckpt_path)
+# # create trainer
+# trainer = Trainer(gpus=1)
+# # create Network
+# # import pdb;pdb.set_trace()
+# hparams = yaml.safe_load(open("/".join(ckpt_path.split("/")[:-1]) + "/hparams.yaml"))
+# if model == "hmr":
+#     net0 = hmr.load_from_checkpoint(checkpoint_path=ckpt_path,hparams=hparams)
+#     net1 = hmr.load_from_checkpoint(checkpoint_path=ckpt_path,hparams=hparams)
+# elif model == "copenet_singleview":
+#     net0 = copenet_singleview.load_from_checkpoint(checkpoint_path=ckpt_path,hparams=hparams)
+#     net1 = copenet_singleview.load_from_checkpoint(checkpoint_path=ckpt_path,hparams=hparams)
+# else:
+#     sys.exit()
 
 # create dataset and dataloader
 train_ds, test_ds = aerialpeople.get_aerialpeople_seqsplit(datapath)
@@ -53,15 +68,20 @@ trn_dl1 = DataLoader(train_ds_1, batch_size=30,
                             drop_last=True)
 
 
-# %% draw sample and forward
+# # %% draw sample and forward
 # res0 = trainer.test(net0,test_dataloaders=[tst_dl,trn_dl])
-# pkl.dump(outputs,open(,"wb"))
+# # pkl.dump(outputs,open(,"wb"))
 # res1 = trainer.test(net1,test_dataloaders=[tst_dl1,trn_dl1])
 
 
 # %%
+import sys
+if modeltype == "hmr":
+    fname = os.path.join(fname ,"final.pkl")
+elif modeltype == "copenet_singleview":
+    fname = os.path.join(fname , "epoch=176.pkl")
 # fname = "/is/ps3/nsaini/projects/copenet/copenet_logs/hmr/version_1_camswaps_correctcam/final.pkl"
-fname = "/is/ps3/nsaini/projects/copenet/copenet_logs/copenet_singleview/version_3_noinputtrans/checkpoints/epoch=176.pkl"
+# fname = "/is/ps3/nsaini/projects/copenet/copenet_logs/copenet_singleview/version_3_noinputtrans/checkpoints/epoch=176.pkl"
 fname0 = fname + "0"
 fname1 = fname + "1"
 
