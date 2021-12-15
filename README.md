@@ -129,6 +129,7 @@ To run the client-server architecture you need:
 
 To test the code you can do the following.
 - Download the dji rosbags that you can find [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/) either from the `test_bag` or `train_bag` folders.
+- Download the checkpoint `airpose_asv3_same_hparams_checkpoint.tar.gz` from [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/) 
 - In separated terminals (with the workspace sourced) run:
   - `roscore`
   - `rosparam set use_sim_time true`
