@@ -13,7 +13,7 @@ import torchvision.transforms as transforms
 from argparse import ArgumentParser
 import numpy as np
 import torchgeometry as tgm
-
+from config import device
 import copy
 from .models import model_copenet as model_copenet
 from .dsets import aerialpeople, copenet_real
