@@ -9,7 +9,7 @@ import pickle as pkl
 import os
 os.environ["PYOPENGL_PLATFORM"] = 'egl'
 
-
+from ..config import device
 from copenet_real.hmr import hmr
 from copenet_real.dsets import copenet_real
 
@@ -99,8 +99,8 @@ res0 = pkl.load(open(fname0,"rb"))
 res1 = pkl.load(open(fname1,"rb"))
 
 
-test_extr0 = test_ds.extr0[8000:15000].to("cuda")
-test_extr1 = test_ds.extr1[8000:15000].to("cuda")
+test_extr0 = test_ds.extr0[8000:15000].to(device)
+test_extr1 = test_ds.extr1[8000:15000].to(device)
 intr0 = test_ds.intr0
 intr1 = test_ds.intr1
 images0 = np.array(test_ds.db["im0"])
@@ -119,10 +119,10 @@ end = len(res0[res_idx])
 
 
 batch_size = res0[res_idx][0]["output"]["tr_pred_vertices_cam"].shape[0]
-pred_vertices_cam0_test = torch.cat([i["output"]["tr_pred_vertices_cam"].to("cuda") for i in res0[res_idx][begin:end]])
-pred_vertices_cam1_test = torch.cat([i["output"]["tr_pred_vertices_cam"].to("cuda") for i in res1[res_idx][begin:end]])
-pred_j3d_cam0_test = torch.cat([i["output"]["tr_pred_j3d_cam"].to("cuda") for i in res0[res_idx][begin:end]])
-pred_j3d_cam1_test = torch.cat([i["output"]["tr_pred_j3d_cam"].to("cuda") for i in res1[res_idx][begin:end]])
+pred_vertices_cam0_test = torch.cat([i["output"]["tr_pred_vertices_cam"].to(device) for i in res0[res_idx][begin:end]])
+pred_vertices_cam1_test = torch.cat([i["output"]["tr_pred_vertices_cam"].to(device) for i in res1[res_idx][begin:end]])
+pred_j3d_cam0_test = torch.cat([i["output"]["tr_pred_j3d_cam"].to(device) for i in res0[res_idx][begin:end]])
+pred_j3d_cam1_test = torch.cat([i["output"]["tr_pred_j3d_cam"].to(device) for i in res1[res_idx][begin:end]])
 pred_j2d_cam0_test = perspective_projection(pred_j3d_cam0_test,
         rotation=torch.eye(3).float().unsqueeze(0).repeat(pred_j3d_cam0_test.shape[0],1,1).type_as(pred_j3d_cam0_test),
         translation=torch.zeros(3).float().unsqueeze(0).repeat(pred_j3d_cam0_test.shape[0],1).type_as(pred_j3d_cam0_test),
@@ -133,12 +133,12 @@ pred_j2d_cam1_test = perspective_projection(pred_j3d_cam1_test,
         translation=torch.zeros(3).float().unsqueeze(0).repeat(pred_j3d_cam1_test.shape[0],1).type_as(pred_j3d_cam1_test),
         focal_length=real_focallen1,
         camera_center=torch.tensor([CX1,CY1]).float().unsqueeze(0).repeat(pred_j3d_cam1_test.shape[0],1).type_as(pred_j3d_cam1_test))[:,:22]
-pred_betas0 = torch.cat([i["output"]["pred_betas"].to("cuda") for i in res0[res_idx][begin:end]])
-pred_betas1 = torch.cat([i["output"]["pred_betas"].to("cuda") for i in res1[res_idx][begin:end]])
-pred_smpltrans0_test = torch.cat([i["output"]["pred_smpltrans"].to("cuda") for i in res0[res_idx][begin:end]])
-pred_smpltrans1_test = torch.cat([i["output"]["pred_smpltrans"].to("cuda") for i in res1[res_idx][begin:end]])
-pred_angles0_test = torch.cat([i["output"]["pred_angles"].to("cuda") for i in res0[res_idx][begin:end]])
-pred_angles1_test = torch.cat([i["output"]["pred_angles"].to("cuda") for i in res1[res_idx][begin:end]])
+pred_betas0 = torch.cat([i["output"]["pred_betas"].to(device) for i in res0[res_idx][begin:end]])
+pred_betas1 = torch.cat([i["output"]["pred_betas"].to(device) for i in res1[res_idx][begin:end]])
+pred_smpltrans0_test = torch.cat([i["output"]["pred_smpltrans"].to(device) for i in res0[res_idx][begin:end]])
+pred_smpltrans1_test = torch.cat([i["output"]["pred_smpltrans"].to(device) for i in res1[res_idx][begin:end]])
+pred_angles0_test = torch.cat([i["output"]["pred_angles"].to(device) for i in res0[res_idx][begin:end]])
+pred_angles1_test = torch.cat([i["output"]["pred_angles"].to(device) for i in res1[res_idx][begin:end]])
 pred_rotmat0_test = tgm.angle_axis_to_rotation_matrix(pred_angles0_test.view(-1,3)).view(pred_angles0_test.shape[0],22,4,4)
 pred_rotmat1_test = tgm.angle_axis_to_rotation_matrix(pred_angles1_test.view(-1,3)).view(pred_angles1_test.shape[0],22,4,4)
 
@@ -207,12 +207,12 @@ plt.show()
 # # ims1 = torch.from_numpy(np.stack([cv2.imread(f)[:,:,::-1]/255. for f in images1[samples]])).permute(0,3,1,2)
 
 # # rend_ims0 = real_renderer0.visualize_tb(pred_vertices_cam0_test[samples],
-# #                         torch.zeros(len(samples),3).float().to("cuda"),
-# #                         torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to("cuda"),
+# #                         torch.zeros(len(samples),3).float().to(device),
+# #                         torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to(device),
 # #                         ims0)
 # # rend_ims1 = real_renderer1.visualize_tb(pred_vertices_cam1_test[samples],
-# #                         torch.zeros(len(samples),3).float().to("cuda"),
-# #                         torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to("cuda"),
+# #                         torch.zeros(len(samples),3).float().to(device),
+# #                         torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to(device),
 # #                         ims1)
 
 # # for_blender_cam0 = pred_vertices_cam0_test_wrt_origin[samples]

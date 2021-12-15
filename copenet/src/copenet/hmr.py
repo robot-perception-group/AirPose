@@ -28,6 +28,8 @@ from .utils.geometry import batch_rodrigues, perspective_projection, estimate_tr
 
 import pytorch_lightning as pl
 
+from .config import device
+
 smplx = None
 smplx_test = None
 
@@ -52,8 +54,8 @@ class hmr(pl.LightningModule):
 
         create_smplx(self.hparams.copenet_home,self.hparams.batch_size,self.hparams.val_batch_size)
         
-        smplx.to("cuda")
-        smplx_test.to("cuda")
+        smplx.to(device)
+        smplx_test.to(device)
         
         smplx_hand_idx = pk.load(open(os.path.join(self.hparams.copenet_home,"src/copenet/data/smplx/MANO_SMPLX_vertex_ids.pkl"),'rb'))
         smplx_face_idx = np.load(os.path.join(self.hparams.copenet_home,"src/copenet/data/smplx/SMPL-X__FLAME_vertex_ids.npy"))

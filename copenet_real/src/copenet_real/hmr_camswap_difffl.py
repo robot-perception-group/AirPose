@@ -26,6 +26,8 @@ from . import constants as CONSTANTS
 from .utils.utils import transform_smpl, add_noise_input_cams,add_noise_input_smpltrans
 from .utils.geometry import batch_rodrigues, perspective_projection, estimate_translation, rot6d_to_rotmat
 
+from .config import device
+
 import pytorch_lightning as pl
 
 from human_body_prior.tools.model_loader import load_model
@@ -57,9 +59,9 @@ class hmr(pl.LightningModule):
 
         create_smplx(self.hparams.copenet_home,self.hparams.batch_size,self.hparams.val_batch_size)
         
-        smplx.to("cuda")
-        smplx_test.to("cuda")
-        vp_model.to("cuda")
+        smplx.to(device)
+        smplx_test.to(device)
+        vp_model.to(device)
         smplx_hand_idx = pk.load(open(os.path.join(self.hparams.copenet_home,"src/copenet/data/smplx/MANO_SMPLX_vertex_ids.pkl"),'rb'))
         smplx_face_idx = np.load(os.path.join(self.hparams.copenet_home,"src/copenet/data/smplx/SMPL-X__FLAME_vertex_ids.npy"))
         self.register_buffer("body_only_mask",torch.ones(smplx.v_template.shape[0],1))

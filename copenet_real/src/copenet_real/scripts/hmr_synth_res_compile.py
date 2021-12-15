@@ -11,6 +11,7 @@ import sys
 import yaml
 os.environ["PYOPENGL_PLATFORM"] = 'egl'
 
+from ..config import device
 
 from copenet.hmr import hmr
 from copenet.copenet_singleview import copenet_singleview
@@ -109,15 +110,15 @@ res0 = pkl.load(open(fname0,"rb"))
 res1 = pkl.load(open(fname1,"rb"))
 
 
-test_extr0 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam0"]["extr"] for f in test_ds.db])).float().to("cuda")
-test_extr1 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam1"]["extr"] for f in test_ds.db])).float().to("cuda")
-intr0 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam0"]["intr"] for f in test_ds.db])).float().to("cuda")
-intr1 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam1"]["intr"] for f in test_ds.db])).float().to("cuda")
+test_extr0 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam0"]["extr"] for f in test_ds.db])).float().to(device)
+test_extr1 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam1"]["extr"] for f in test_ds.db])).float().to(device)
+intr0 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam0"]["intr"] for f in test_ds.db])).float().to(device)
+intr1 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam1"]["intr"] for f in test_ds.db])).float().to(device)
 images0 = np.array([os.path.join("/ps/project/datasets/AirCap_ICCV19/agora_copenet_uniform_new",pkl.load(open(f,"rb"))["im0"]) for f in test_ds.db])
 images1 = np.array([os.path.join("/ps/project/datasets/AirCap_ICCV19/agora_copenet_uniform_new",pkl.load(open(f,"rb"))["im1"]) for f in test_ds_1.db])
 gt_vertices = np.array([pkl.load(open(f,"rb"))["smpl_vertices_wrt_origin"] for f in test_ds.db])[:,0]
-gt_smpltrans = torch.from_numpy(np.concatenate([pkl.load(open(f,"rb"))["smpltrans"] for f in test_ds.db])).float().to("cuda")
-gt_j3d = torch.from_numpy(np.concatenate([pkl.load(open(f,"rb"))["smpl_joints_wrt_origin"] for f in test_ds.db])).float().to("cuda")
+gt_smpltrans = torch.from_numpy(np.concatenate([pkl.load(open(f,"rb"))["smpltrans"] for f in test_ds.db])).float().to(device)
+gt_j3d = torch.from_numpy(np.concatenate([pkl.load(open(f,"rb"))["smpl_joints_wrt_origin"] for f in test_ds.db])).float().to(device)
 
 
 begin = 0
@@ -125,18 +126,18 @@ end = len(res0[0])
 
 
 batch_size = res0[0][0]["output"]["pred_vertices_cam"].shape[0]
-pred_vertices_cam0_test = torch.cat([i["output"]["pred_vertices_cam"].to("cuda") for i in res0[0][begin:end]])
-pred_vertices_cam1_test = torch.cat([i["output"]["pred_vertices_cam"].to("cuda") for i in res1[0][begin:end]])
-pred_j3d_cam0_test = torch.cat([i["output"]["pred_j3d_cam"].to("cuda") for i in res0[0][begin:end]])
-pred_j3d_cam1_test = torch.cat([i["output"]["pred_j3d_cam"].to("cuda") for i in res1[0][begin:end]])
-pred_smpltrans0_test = torch.cat([i["output"]["pred_smpltrans"].to("cuda") for i in res0[0][begin:end]])
-pred_smpltrans1_test = torch.cat([i["output"]["pred_smpltrans"].to("cuda") for i in res1[0][begin:end]])
-gt_smpltrans0_test = torch.cat([i["output"]["gt_smpltrans"].to("cuda") for i in res0[0][begin:end]])
-gt_smpltrans1_test = torch.cat([i["output"]["gt_smpltrans"].to("cuda") for i in res1[0][begin:end]])
-pred_betas0 = torch.cat([i["output"]["pred_betas"].to("cuda") for i in res0[0][begin:end]])
-pred_betas1 = torch.cat([i["output"]["pred_betas"].to("cuda") for i in res1[0][begin:end]])
-pred_angles0_test = torch.cat([i["output"]["pred_angles"].to("cuda") for i in res0[0][begin:end]])
-pred_angles1_test = torch.cat([i["output"]["pred_angles"].to("cuda") for i in res1[0][begin:end]])
+pred_vertices_cam0_test = torch.cat([i["output"]["pred_vertices_cam"].to(device) for i in res0[0][begin:end]])
+pred_vertices_cam1_test = torch.cat([i["output"]["pred_vertices_cam"].to(device) for i in res1[0][begin:end]])
+pred_j3d_cam0_test = torch.cat([i["output"]["pred_j3d_cam"].to(device) for i in res0[0][begin:end]])
+pred_j3d_cam1_test = torch.cat([i["output"]["pred_j3d_cam"].to(device) for i in res1[0][begin:end]])
+pred_smpltrans0_test = torch.cat([i["output"]["pred_smpltrans"].to(device) for i in res0[0][begin:end]])
+pred_smpltrans1_test = torch.cat([i["output"]["pred_smpltrans"].to(device) for i in res1[0][begin:end]])
+gt_smpltrans0_test = torch.cat([i["output"]["gt_smpltrans"].to(device) for i in res0[0][begin:end]])
+gt_smpltrans1_test = torch.cat([i["output"]["gt_smpltrans"].to(device) for i in res1[0][begin:end]])
+pred_betas0 = torch.cat([i["output"]["pred_betas"].to(device) for i in res0[0][begin:end]])
+pred_betas1 = torch.cat([i["output"]["pred_betas"].to(device) for i in res1[0][begin:end]])
+pred_angles0_test = torch.cat([i["output"]["pred_angles"].to(device) for i in res0[0][begin:end]])
+pred_angles1_test = torch.cat([i["output"]["pred_angles"].to(device) for i in res1[0][begin:end]])
 pred_rotmat0_test = tgm.angle_axis_to_rotation_matrix(pred_angles0_test.view(-1,3)).view(pred_angles0_test.shape[0],22,4,4)
 pred_rotmat1_test = tgm.angle_axis_to_rotation_matrix(pred_angles1_test.view(-1,3)).view(pred_angles1_test.shape[0],22,4,4)
 
@@ -149,16 +150,16 @@ pred_vertices_cam1_test_wrt_origin,pred_j3d_cam1_test_wrt_origin,pred_orient1_wr
 
 smplx = SMPLX(os.path.join("/is/ps3/nsaini/projects/copenet","src/copenet/data/smplx/models/smplx"),
                          batch_size=4,
-                         create_transl=False).to("cuda").eval()
+                         create_transl=False).to(device).eval()
 
 joints3d = [] 
 for i in tqdm(range(pred_rotmat1_test.shape[0])):
-        out = smplx.forward(body_pose=torch.cat([test_ds[i]["smplpose_rotmat"].unsqueeze(0).to("cuda"),
-                                                test_ds[i]["smplpose_rotmat"].unsqueeze(0).to("cuda"),
+        out = smplx.forward(body_pose=torch.cat([test_ds[i]["smplpose_rotmat"].unsqueeze(0).to(device),
+                                                test_ds[i]["smplpose_rotmat"].unsqueeze(0).to(device),
                                                 pred_rotmat0_test[i:i+1,1:22,:3,:3],
                                                 pred_rotmat1_test[i:i+1,1:22,:3,:3]]),
-                                global_orient= torch.cat([test_ds[i]["smplorient_rel0"].to("cuda").unsqueeze(0),
-                                                test_ds[i]["smplorient_rel1"].to("cuda").unsqueeze(0),
+                                global_orient= torch.cat([test_ds[i]["smplorient_rel0"].to(device).unsqueeze(0),
+                                                test_ds[i]["smplorient_rel1"].to(device).unsqueeze(0),
                                                 pred_rotmat0_test[i:i+1,0:1,:3,:3],
                                                 pred_rotmat1_test[i:i+1,0:1,:3,:3]]),pose2rot=False)
         joints3d.append(out.joints.detach().cpu().numpy())
@@ -178,12 +179,12 @@ ims0 = torch.from_numpy(np.stack([cv2.imread(f)[:,:,::-1]/255. for f in images0[
 ims1 = torch.from_numpy(np.stack([cv2.imread(f)[:,:,::-1]/255. for f in images1[samples]])).permute(0,3,1,2)
 
 rend_ims0 = synth_renderer.visualize_tb(pred_vertices_cam0_test[samples],
-                        torch.zeros(len(samples),3).float().to("cuda"),
-                        torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to("cuda"),
+                        torch.zeros(len(samples),3).float().to(device),
+                        torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to(device),
                         ims0)
 rend_ims1 = synth_renderer.visualize_tb(pred_vertices_cam1_test[samples],
-                        torch.zeros(len(samples),3).float().to("cuda"),
-                        torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to("cuda"),
+                        torch.zeros(len(samples),3).float().to(device),
+                        torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to(device),
                         ims1)
 
 

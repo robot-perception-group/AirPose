@@ -26,7 +26,7 @@ The code was tested using `Python 3.8`.
 
 Now, you may want to create a virtual environment. Please be sure your `pip` is updated.
 
-Install the necessary requirements with `pip install -r requirements.txt`
+Install the necessary requirements with `pip install -r requirements.txt`. If you don't have a cuda compatible device, change the device to `cpu` in `copenet_real/src/copenet_real/config.py` and `copenet/src/copenet/config.py`.
 
 ## Synthetic data training 
 

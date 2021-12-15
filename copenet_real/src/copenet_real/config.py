@@ -5,6 +5,8 @@ Things you need to change: *_ROOT that indicate the path to each dataset
 """
 from os.path import join
 
+device = "cuda"
+
 # H36M_ROOT = ''
 # LSP_ROOT = ''
 # LSP_ORIGINAL_ROOT = ''

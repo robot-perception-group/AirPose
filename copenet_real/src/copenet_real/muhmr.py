@@ -27,6 +27,7 @@ from .utils.utils import transform_smpl, add_noise_input_cams,add_noise_input_sm
 from .utils.geometry import batch_rodrigues, perspective_projection, estimate_translation, rot6d_to_rotmat
 
 import pytorch_lightning as pl
+from .config import device
 
 smplx = None
 smplx_test = None
@@ -53,8 +54,8 @@ class muhmr(pl.LightningModule):
 
         create_smplx(self.hparams.copenet_home,self.hparams.batch_size,self.hparams.val_batch_size)
         
-        smplx.to("cuda")
-        smplx_test.to("cuda")
+        smplx.to(device)
+        smplx_test.to(device)
         
         smplx_hand_idx = pk.load(open(os.path.join(self.hparams.copenet_home,"src/copenet_real/data/smplx/MANO_SMPLX_vertex_ids.pkl"),'rb'))
         smplx_face_idx = np.load(os.path.join(self.hparams.copenet_home,"src/copenet_real/data/smplx/SMPL-X__FLAME_vertex_ids.npy"))

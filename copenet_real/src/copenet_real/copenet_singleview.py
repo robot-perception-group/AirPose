@@ -31,6 +31,8 @@ import pytorch_lightning as pl
 from human_body_prior.tools.model_loader import load_model
 from human_body_prior.models.vposer_model import VPoser
 
+from .config import device
+
 vp_model = load_model("/ps/scratch/common/vposer/V02_05", model_code=VPoser,remove_words_in_model_weights="vp_model.")[0]
 
 smplx = None
@@ -58,9 +60,9 @@ class copenet_singleview(pl.LightningModule):
 
         create_smplx(self.hparams.copenet_home,self.hparams.batch_size,self.hparams.val_batch_size)
         
-        smplx.to("cuda")
-        smplx_test.to("cuda")
-        vp_model.to("cuda")
+        smplx.to(device)
+        smplx_test.to(device)
+        vp_model.to(device)
         
         smplx_hand_idx = pk.load(open(os.path.join(self.hparams.copenet_home,"src/copenet/data/smplx/MANO_SMPLX_vertex_ids.pkl"),'rb'))
         smplx_face_idx = np.load(os.path.join(self.hparams.copenet_home,"src/copenet/data/smplx/SMPL-X__FLAME_vertex_ids.npy"))

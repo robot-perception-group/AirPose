@@ -9,7 +9,7 @@ import pickle as pkl
 import os
 os.environ["PYOPENGL_PLATFORM"] = 'egl'
 
-
+from ..config import device
 from copenet.muhmr import muhmr
 from copenet_real.dsets import aerialpeople
 
@@ -73,29 +73,29 @@ synth_renderer = Renderer(synth_focallen,img_res,[img_res[0]/2,img_res[1]/2],smp
 res = pkl.load(open(fname,"rb"))
 
 
-test_extr0 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam0"]["extr"] for f in test_ds.db])).float().to("cuda")
-test_extr1 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam1"]["extr"] for f in test_ds.db])).float().to("cuda")
-intr0 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam0"]["intr"] for f in test_ds.db])).float().to("cuda")
-intr1 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam1"]["intr"] for f in test_ds.db])).float().to("cuda")
+test_extr0 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam0"]["extr"] for f in test_ds.db])).float().to(device)
+test_extr1 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam1"]["extr"] for f in test_ds.db])).float().to(device)
+intr0 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam0"]["intr"] for f in test_ds.db])).float().to(device)
+intr1 = torch.from_numpy(np.stack([pkl.load(open(f,"rb"))["cam1"]["intr"] for f in test_ds.db])).float().to(device)
 images0 = np.array([os.path.join("/ps/project/datasets/AirCap_ICCV19/agora_copenet_uniform_new",pkl.load(open(f,"rb"))["im0"]) for f in test_ds.db])
 images1 = np.array([os.path.join("/ps/project/datasets/AirCap_ICCV19/agora_copenet_uniform_new",pkl.load(open(f,"rb"))["im1"]) for f in test_ds.db])
-gt_smpltrans = torch.from_numpy(np.concatenate([pkl.load(open(f,"rb"))["smpltrans"] for f in test_ds.db])).float().to("cuda")
+gt_smpltrans = torch.from_numpy(np.concatenate([pkl.load(open(f,"rb"))["smpltrans"] for f in test_ds.db])).float().to(device)
 
 
 begin = 0
 end = len(res[0])
 
 batch_size = res[0][0]["output"]["pred_vertices_cam0"].shape[0]
-pred_vertices_cam0_test = torch.cat([i["output"]["pred_vertices_cam0"].to("cuda") for i in res[0][begin:end]])
-pred_vertices_cam1_test = torch.cat([i["output"]["pred_vertices_cam1"].to("cuda") for i in res[0][begin:end]])
-pred_j3d_cam0_test = torch.cat([i["output"]["pred_j3d_cam0"].to("cuda") for i in res[0][begin:end]])
-pred_betas0 = torch.cat([i["output"]["pred_betas0"].to("cuda") for i in res[0][begin:end]])
-pred_betas1 = torch.cat([i["output"]["pred_betas1"].to("cuda") for i in res[0][begin:end]])
-pred_j3d_cam1_test = torch.cat([i["output"]["pred_j3d_cam1"].to("cuda") for i in res[0][begin:end]])
-pred_smpltrans0_test = torch.cat([i["output"]["pred_smpltrans0"].to("cuda") for i in res[0][begin:end]])
-pred_smpltrans1_test = torch.cat([i["output"]["pred_smpltrans1"].to("cuda") for i in res[0][begin:end]])
-pred_angles0_test = torch.cat([i["output"]["pred_angles0"].to("cuda") for i in res[0][begin:end]])
-pred_angles1_test = torch.cat([i["output"]["pred_angles1"].to("cuda") for i in res[0][begin:end]])
+pred_vertices_cam0_test = torch.cat([i["output"]["pred_vertices_cam0"].to(device) for i in res[0][begin:end]])
+pred_vertices_cam1_test = torch.cat([i["output"]["pred_vertices_cam1"].to(device) for i in res[0][begin:end]])
+pred_j3d_cam0_test = torch.cat([i["output"]["pred_j3d_cam0"].to(device) for i in res[0][begin:end]])
+pred_betas0 = torch.cat([i["output"]["pred_betas0"].to(device) for i in res[0][begin:end]])
+pred_betas1 = torch.cat([i["output"]["pred_betas1"].to(device) for i in res[0][begin:end]])
+pred_j3d_cam1_test = torch.cat([i["output"]["pred_j3d_cam1"].to(device) for i in res[0][begin:end]])
+pred_smpltrans0_test = torch.cat([i["output"]["pred_smpltrans0"].to(device) for i in res[0][begin:end]])
+pred_smpltrans1_test = torch.cat([i["output"]["pred_smpltrans1"].to(device) for i in res[0][begin:end]])
+pred_angles0_test = torch.cat([i["output"]["pred_angles0"].to(device) for i in res[0][begin:end]])
+pred_angles1_test = torch.cat([i["output"]["pred_angles1"].to(device) for i in res[0][begin:end]])
 pred_rotmat0_test = tgm.angle_axis_to_rotation_matrix(pred_angles0_test.view(-1,3)).view(pred_angles0_test.shape[0],22,4,4)
 pred_rotmat1_test = tgm.angle_axis_to_rotation_matrix(pred_angles1_test.view(-1,3)).view(pred_angles1_test.shape[0],22,4,4)
 
@@ -119,12 +119,12 @@ ims0 = torch.from_numpy(np.stack([cv2.imread(f)[:,:,::-1]/255. for f in images0[
 ims1 = torch.from_numpy(np.stack([cv2.imread(f)[:,:,::-1]/255. for f in images1[samples]])).permute(0,3,1,2)
 
 rend_ims0 = synth_renderer.visualize_tb(pred_vertices_cam0_test[samples],
-                        torch.zeros(len(samples),3).float().to("cuda"),
-                        torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to("cuda"),
+                        torch.zeros(len(samples),3).float().to(device),
+                        torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to(device),
                         ims0)
 rend_ims1 = synth_renderer.visualize_tb(pred_vertices_cam1_test[samples],
-                        torch.zeros(len(samples),3).float().to("cuda"),
-                        torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to("cuda"),
+                        torch.zeros(len(samples),3).float().to(device),
+                        torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).to(device),
                         ims1)
 
 for_blender_cam0 = pred_vertices_cam0_test_wrt_origin[samples]
@@ -145,7 +145,7 @@ for_blender_cam1 = pred_vertices_cam1_test_wrt_origin[samples]
 #                          batch_size=len(samples),
 #                          create_transl=False)
 
-# smplx.to("cuda")
+# smplx.to(device)
 # pred_output = smplx.forward(betas=pred_betas_mean[samples], 
 #                                 body_pose=pred_rotmat_body_mean[samples,:,:3,:3],
 #                                 global_orient=torch.eye(3).float().unsqueeze(0).repeat(len(samples),1,1).unsqueeze(1).type_as(pred_betas_mean),

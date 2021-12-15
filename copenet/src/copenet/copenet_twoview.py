@@ -28,6 +28,7 @@ from .utils.geometry import batch_rodrigues, perspective_projection, estimate_tr
 
 import pytorch_lightning as pl
 
+from .config import device
 
 smplx = None
 smplx_test = None
@@ -60,8 +61,8 @@ class copenet_twoview(pl.LightningModule):
 
         create_smplx(self.hparams.copenet_home,self.hparams.batch_size,self.hparams.val_batch_size)
         
-        smplx.to("cuda")
-        smplx_test.to("cuda")
+        smplx.to(device)
+        smplx_test.to(device)
 
         smplx_hand_idx = pk.load(open(os.path.join(self.hparams.copenet_home,"src/copenet/data/smplx/MANO_SMPLX_vertex_ids.pkl"),'rb'))
         smplx_face_idx = np.load(os.path.join(self.hparams.copenet_home,"src/copenet/data/smplx/SMPL-X__FLAME_vertex_ids.npy"))
@@ -553,17 +554,17 @@ class copenet_twoview(pl.LightningModule):
         mean_train_err_smpltrans1 = np.mean(np.sqrt(np.sum(train_err_smpltrans1**2,1)))
 
 
-        smplpose_rotmat = torch.stack([x["output"]["smplpose_rotmat"].to("cuda") for x in outputs[0]])
-        smplorient_rel0 = torch.stack([x["output"]["smplorient_rel0"].to("cuda") for x in outputs[0]])  
-        smplorient_rel1 = torch.stack([x["output"]["smplorient_rel1"].to("cuda") for x in outputs[0]])
+        smplpose_rotmat = torch.stack([x["output"]["smplpose_rotmat"].to(device) for x in outputs[0]])
+        smplorient_rel0 = torch.stack([x["output"]["smplorient_rel0"].to(device) for x in outputs[0]])  
+        smplorient_rel1 = torch.stack([x["output"]["smplorient_rel1"].to(device) for x in outputs[0]])
 
-        pred_angles0_test = torch.cat([x["output"]["pred_angles0"].to("cuda") for x in outputs[0]])
-        pred_angles1_test = torch.cat([x["output"]["pred_angles1"].to("cuda") for x in outputs[0]])
+        pred_angles0_test = torch.cat([x["output"]["pred_angles0"].to(device) for x in outputs[0]])
+        pred_angles1_test = torch.cat([x["output"]["pred_angles1"].to(device) for x in outputs[0]])
         pred_rotmat0_test = tgm.angle_axis_to_rotation_matrix(pred_angles0_test.view(-1,3)).view(smplpose_rotmat.shape[0],smplpose_rotmat.shape[1],22,4,4)
         pred_rotmat1_test = tgm.angle_axis_to_rotation_matrix(pred_angles1_test.view(-1,3)).view(smplpose_rotmat.shape[0],smplpose_rotmat.shape[1],22,4,4)
 
-        # pred_angles0_train = torch.cat([x["output"]["pred_angles0"].to("cuda") for x in outputs[1]])
-        # pred_angles1_train = torch.cat([x["output"]["pred_angles1"].to("cuda") for x in outputs[1]])
+        # pred_angles0_train = torch.cat([x["output"]["pred_angles0"].to(device) for x in outputs[1]])
+        # pred_angles1_train = torch.cat([x["output"]["pred_angles1"].to(device) for x in outputs[1]])
         # pred_rotmat0_train = tgm.angle_axis_to_rotation_matrix(pred_angles0_train.view(-1,3)).view(pred_angles0_train.shape[0],22,4,4)
         # pred_rotmat1_train = tgm.angle_axis_to_rotation_matrix(pred_angles1_train.view(-1,3)).view(pred_angles1_train.shape[0],22,4,4)
     
