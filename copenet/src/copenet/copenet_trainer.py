@@ -7,7 +7,7 @@ from copenet.copenet_twoview import copenet_twoview
 from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 
-from .config import device
+from config import device
 if device == "cuda":
     gpu = -1
 else:
