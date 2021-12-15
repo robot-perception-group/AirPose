@@ -34,7 +34,8 @@ from .utils.utils import transform_smpl, add_noise_input_cams,add_noise_input_sm
 from .utils.geometry import batch_rodrigues, perspective_projection, estimate_translation, rot6d_to_rotmat
 
 import pytorch_lightning as pl
-from .config import vposer_weights
+from config import vposer_weights
+from config import device
 
 from human_body_prior.tools.model_loader import load_model
 from human_body_prior.models.vposer_model import VPoser
