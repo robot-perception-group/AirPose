@@ -22,7 +22,7 @@ _________
 To run the code of this repository you first need to download the data.
 The code was tested using `Python 3.8`.
 
-`SMPLX` code in this repo is a modified version of the official SMLX [implementation](https://github.com/vchoutas/smplx). Download the SMPLX model weights from [here](https://smpl.is.tue.mpg.de/) and put them in `copenet/data/smplx/models/smplx`.
+`SMPLX` code in this repo is a modified version of the official SMLX [implementation](https://github.com/vchoutas/smplx). Download the SMPLX model weights from [here](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=models_smplx_v1_1.zip) and put them in `copenet/data/smplx/models/smplx`. You need to register before being able to download the weights.
 
 Now, you may want to create a virtual environment. Please be sure your `pip` is updated.
 
@@ -63,7 +63,7 @@ python src/copenet_real/scripts/copenet_synth_res_compile.py "model type" "check
 
 
 ## Fine-tuning on real dataset
-The data to be used is `copenet_dji.tar.gz`
+The data to be used is `copenet_dji.tar.gz`. Download the Head and hands indices files form [here](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=smplx_mano_flame_correspondences.zip) and place them in `copenet/data`.
 
 `cd AirPose/copenet_real/`
 
