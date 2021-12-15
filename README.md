@@ -24,7 +24,7 @@ The code was tested using `Python 3.8`.
 
 `SMPLX` code in this repo is a modified version of the official SMLX [implementation](https://github.com/vchoutas/smplx). Download the SMPLX model weights from [here](https://smpl.is.tue.mpg.de/) and put them in `copenet/data/smplx/models/smplx`.
 
-Now, you may want to create a virtual environment. 
+Now, you may want to create a virtual environment. Please be sure your `pip` is updated.
 
 Install the necessary requirements with `pip install -r requirements.txt`
 
