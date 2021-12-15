@@ -130,21 +130,27 @@ To run the client-server architecture you need:
 To test the code you can do the following.
 - Download the dji rosbags that you can find [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/) either from the `test_bag` or `train_bag` folders.
 - Download the checkpoint `airpose_asv3_same_hparams_checkpoint.tar.gz` from [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/) 
-- In separated terminals (with the workspace sourced) run:
-  - `roscore`
-  - `rosparam set use_sim_time true`
-  - Launch the first client (i.e. the first "drone") with `roslaunch airpose_client one_robot.launch host:=127.0.0.1 port:=9901 feedback_topic:=info img_topic:=camera/image_raw camera_info_topic:=camera/info robotID:=1 reproject:=false groundtruth:=true`, with host you can change the server IP address, port must correspond, `feedback_topic` must contain the ROI and is of type `neural_network_detector::NeuralNetworkFeedback`, robotID should be either 1 or 2, `reproject` is used to avoid a reprojection to different intrisics parameters and `groundtruth:=true` is used to provide `{min_x, max_x, min_y, max_y}` in the ROI message (description below) 
-  - Launch the second client `roslaunch airpose_client one_robot.launch host:=127.0.0.1 port:=9902 feedback_topic:=info img_topic:=camera/image_raw camera_info_topic:=camera/info robotID:=2 reproject:=false groundtruth:=true`
-  - Launch the first server, default IP 127.0.0.1.  
-    Firstly change folder to `cd AirPose/catkin_ws/src/aircap/packages/flight/airpose_server` and then run `python server.py -p 9901 -m /path/to/the/file.ckpt`, note that `-p port` needs to match the client_1 port
-  - Launch the second server, default IP 127.0.0.1. 
-    Firstly change folder to `cd AirPose/catkin_ws/src/aircap/packages/flight/airpose_server` and then run `python server.py -p 9902 -m /path/to/the/file.ckpt`, note that `-p port` needs to match the client_2 port
-  - To visualize the results you need to install some dependencies `pip install meshcat rospkg`
-    
-    Afterwards, change folder to `cd AirPose/catkin_ws/src/aircap/packages/flight/airpose_server` and run `pip install -e smplx`.
-    
-    The visualization node can then be run with package from  `python copenet_rosViz.py machine_1` or `python copenet_rosViz.py machine_2`
-  - `rosbag play d*_split1.bag --clock --pause`, where split{n-th} is the n-th split of a longer sequence. The splits have some overlap between them. If your pc is powerful enough you might also want to try the full bags.
+
+In separated terminals (with the workspace sourced) run:
+- `roscore`
+- `rosparam set use_sim_time true`
+- Launch the first client (i.e. the first "drone") with `roslaunch airpose_client one_robot.launch host:=127.0.0.1 port:=9901 feedback_topic:=info img_topic:=camera/image_raw camera_info_topic:=camera/info robotID:=1 reproject:=false groundtruth:=true`, with host you can change the server IP address, port must correspond, `feedback_topic` must contain the ROI and is of type `neural_network_detector::NeuralNetworkFeedback`, robotID should be either 1 or 2, `reproject` is used to avoid a reprojection to different intrisics parameters and `groundtruth:=true` is used to provide `{min_x, max_x, min_y, max_y}` in the ROI message (description below) 
+- Launch the second client `roslaunch airpose_client one_robot.launch host:=127.0.0.1 port:=9902 feedback_topic:=info img_topic:=camera/image_raw camera_info_topic:=camera/info robotID:=2 reproject:=false groundtruth:=true`
+- Launch the servers, default IP 127.0.0.1
+
+  *Using the virtualenv/python3.8 installations with previous requirements installed*
+
+   - Firstly change folder to `cd AirPose/catkin_ws/src/aircap/packages/flight/airpose_server` 
+      - First server, run `python server.py -p 9901 -m /path/to/the/file.ckpt`, note that `-p port` needs to match the client_1 port
+      - Second server, run `python server.py -p 9902 -m /path/to/the/file.ckpt`, note that `-p port` needs to match the client_2 port
+- To visualize the results you need to install some dependencies 
+
+  *Using the virtualenv/python3.8 installations with previous requirements installed*.
+
+     - run `pip install meshcat rospkg`
+     - Change folder to `cd AirPose/catkin_ws/src/aircap/packages/flight/airpose_server` and run `pip install -e smplx`.
+     - The visualization node can then be run with `python copenet_rosViz.py machine_1` or `python copenet_rosViz.py machine_2`
+- `rosbag play d*_split1.bag --clock --pause`, where split{n-th} is the n-th split of a longer sequence. The splits have some overlap between them. If your pc is powerful enough you might also want to try the full bags.
 
 At this point you should be able to see play the rosbag in the way you prefer.
 
