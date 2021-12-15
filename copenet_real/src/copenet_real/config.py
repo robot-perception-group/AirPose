@@ -6,6 +6,7 @@ Things you need to change: *_ROOT that indicate the path to each dataset
 from os.path import join
 
 device = "cuda"
+vposer_weights = None
 
 # H36M_ROOT = ''
 # LSP_ROOT = ''

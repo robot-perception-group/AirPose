@@ -13,7 +13,6 @@ from ..utils.utils import npPerspProj, resize_with_pad
 import copy
 from .. import constants as CONSTANTS
 import torchgeometry as tgm
-import h5py
 
 # remove nose as head
 op_map2smpl = np.array([8,12,9,-1,13,10,-1,14,11,-1,19,22,1,-1,-1,-1,5,2,6,3,7,4,-1,-1])
