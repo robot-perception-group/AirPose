@@ -81,5 +81,66 @@ The `datapath` is the location of the training data.
 
 `--model` specify the model type between `[hmr, copenet_twoview]` which corresponds to the Baseline, AirPose respectively.
 
+*Note*: for the `hmr` model `pytorch-lightning<=1.2` is required.
+
 The `--resume_from_checkpoint` is path to the pretrained checkpoint on the synthetic data. 
 
+
+## Testing the client-server synchronization mechanism
+
+To this end you need to install ros-{melodic,noetic} in your pc.
+
+Please follow the instructions that you can find [here](http://wiki.ros.org/Installation/Ubuntu)
+
+After that you need to install the following dependencies:
+
+```
+sudo add-apt-repository ppa:joseluisblancoc/mrpt-stable
+sudo apt install libmrpt-dev mrpt-apps
+```
+
+Navigate to your `catkin_ws` folder (e.g. `AirPose/catkin_ws`) and run:
+
+```
+touch src/aircap/packages/optional/basler_image_capture/Grab/CATKIN_IGNORE
+touch src/aircap/packages/optional/ptgrey_image_capture/Grab/CATKIN_IGNORE
+```
+
+### this applies to ros-melodic
+```
+cd catkin_ws/src/aircap
+git checkout realworld-airpose-melodic-backport
+cd ../../
+touch src/aircap/packages/3rdparty/mrpt_bridge/CATKIN_IGNORE
+touch src/aircap/packages/3rdparty/pose_cov_ops/CATKIN_IGNORE
+sudo apt install -y ros-melodic-octomap-msgs ros-melodic-cv-camera ros-melodic-marker-msgs ros-melodic-mrpt-msgs ros-melodic-octomap-ros ros-melodic-mrpt-bridge
+```
+
+### this applies to ros-noetic
+`sudo apt install -y ros-noetic-octomap-msgs ros-noetic-cv-camera ros-noetic-marker-msgs ros-noetic-mrpt-msgs ros-noetic-octomap-ros`
+
+Then you can run `catkin_make` from the `catkin_ws` folder to build the whole workspace.
+
+To run the client-server architecture you need:
+- An image topic
+- A camera_info topic
+- A feedback topic with the region of interest information
+
+To test the code you can do the following.
+- Download the dji rosbags that you can find [here]().
+- In separated terminals (with the workspace sourced) run:
+  - `roscore`
+  - `rosparam set use_sim_time true`
+  - `roslaunch client1`
+  - `roslaunch client2`
+  - `python server1`
+  - `python server2`
+  - `python visualization`
+  - `rosbag play d*_split1.bag --clock --pause`, where split{id} is the n-th split of a longer sequence. The splits have some overlap between them.
+
+At this point you should be able to see play the rosbag in the way you prefer.
+
+The published topics, for each machine, are:
+- `machine_x/step1_pub`, the results of the first step of the network, read by the other machine
+- `machine_x/step2_pub`, the results of the second step of the network, read by the other machine
+- `machine_x/step3_pub`, the final results of `machine_x`
