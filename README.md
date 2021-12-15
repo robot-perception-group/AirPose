@@ -7,6 +7,11 @@ _________
 Check the teaser [video](https://www.youtube.com/watch?v=gUKMepNm-HQ/)
 
 This repository contains the code of _AirPose_ a novel markerless 3D human motion capture (MoCap) system for unstructured, outdoor environments that uses a team of autonomous unmanned aerialvehicles (UAVs) with on-board RGB cameras and computation.
+
+Please clone the repository with the following 
+
+`git clone https://github.com/robot-perception-group/AirPose.git --recursive`
+
 _________
 
 Data can be freely accessed [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/).
