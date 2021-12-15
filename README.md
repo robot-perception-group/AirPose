@@ -127,7 +127,7 @@ To run the client-server architecture you need:
 - A feedback topic with the region of interest information
 
 To test the code you can do the following.
-- Download the dji rosbags that you can find [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/).
+- Download the dji rosbags that you can find [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/) either from the `test_bag` or `train_bag` folders.
 - In separated terminals (with the workspace sourced) run:
   - `roscore`
   - `rosparam set use_sim_time true`
