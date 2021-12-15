@@ -16,7 +16,7 @@ import torchgeometry as tgm
 
 import copy
 from .models import model_copenet
-from .dsets import aerialpeople, aircapData
+from .dsets import aerialpeople
 import cv2
 import torchvision
 from .smplx.smplx import SMPLX, lbs

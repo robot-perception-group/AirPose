@@ -16,7 +16,7 @@ import torchgeometry as tgm
 
 import copy
 from .models import model_copenet as model_copenet
-from .dsets import aerialpeople, aircapData, copenet_real
+from .dsets import aerialpeople, copenet_real
 
 ############### For Rebuttal #####################
 # we want to use aircap data but don;'t want to change the code
