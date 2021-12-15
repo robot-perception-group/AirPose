@@ -29,11 +29,12 @@ from .utils.geometry import batch_rodrigues, perspective_projection, estimate_tr
 from .config import device
 
 import pytorch_lightning as pl
+from .config import vposer_weights
 
 from human_body_prior.tools.model_loader import load_model
 from human_body_prior.models.vposer_model import VPoser
 
-vp_model = load_model("/ps/scratch/common/vposer/V02_05", model_code=VPoser,remove_words_in_model_weights="vp_model.")[0]
+vp_model = load_model(vposer_weights, model_code=VPoser,remove_words_in_model_weights="vp_model.")[0]
 
 smplx = None
 smplx_test = None

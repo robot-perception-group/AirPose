@@ -71,7 +71,7 @@ The data to be used is `copenet_dji.tar.gz`.
 
 `pip install -e .`
 
-Install the human body prior from [here](https://github.com/nghorbani/human_body_prior) and download its pretrained weights from [here](https://smpl-x.is.tue.mpg.de/download.php). Set the `vposer_weights` variable in the `copenet_real/src/copenet_real/config.py` file to the absolute path of the downloaded weights. 
+Install the human body prior from [here](https://github.com/nghorbani/human_body_prior) and download its pretrained weights (version 2) from [here](https://smpl-x.is.tue.mpg.de/download.php). Set the `vposer_weights` variable in the `copenet_real/src/copenet_real/config.py` file to the absolute path of the downloaded weights. 
 
 And code can be run by the following
 
