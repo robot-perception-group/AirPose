@@ -7,7 +7,6 @@ from copenet.copenet_twoview import copenet_twoview
 from pytorch_lightning.loggers import TensorBoardLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 
-
 import os, sys, time
 os.environ["PYOPENGL_PLATFORM"] = 'egl'
 # os.environ['EGL_DEVICE_ID'] = os.environ['GPU_DEVICE_ORDINAL'].split(',')[0]
@@ -49,7 +48,7 @@ def main(args):
 
     trainer = Trainer.from_argparse_args(args,
                                             default_root_dir=exp_dir,
-                                            gpus = 1,
+                                            gpus = -1,
                                             resume_from_checkpoint=last_ckpt,
                                             checkpoint_callback=ckpt_callback,
                                             callbacks = [ckpt_callback],
