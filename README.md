@@ -127,16 +127,16 @@ To run the client-server architecture you need:
 - A feedback topic with the region of interest information
 
 To test the code you can do the following.
-- Download the dji rosbags that you can find [here]().
+- Download the dji rosbags that you can find [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/).
 - In separated terminals (with the workspace sourced) run:
   - `roscore`
   - `rosparam set use_sim_time true`
-  - `roslaunch client1`
-  - `roslaunch client2`
-  - `python server1`
-  - `python server2`
+  - Launch the first client (i.e. the first "drone") with `roslaunch airpose_client one_robot.launch host:=127.0.0.1 port:=9901 feedback_topic:=info img_topic:=camera/image_raw camera_info_topic:=camera/info robotID:=1 reproject:=false groundtruth:=true`, with host you can change the server IP address, port must correspond, `feedback_topic` must contain the ROI and is of type `neural_network_detector::NeuralNetworkFeedback`, robotID should be either 1 or 2, `reproject` is used to avoid a reprojection to different intrisics parameters and `groundtruth:=true` is used to provide `{min_x, max_x, min_y, max_y}` in the ROI message (description below) 
+  - Launch the second client `roslaunch airpose_client one_robot.launch host:=127.0.0.1 port:=9902 feedback_topic:=info img_topic:=camera/image_raw camera_info_topic:=camera/info robotID:=2 reproject:=false groundtruth:=true`
+  - Launch the first server, default IP 127.0.0.1 `python server.py -p 9901 -m /path/to/the/file.ckpt`, note that `-p port` needs to match the client_1 port
+  - Launch the second server, default IP 127.0.0.1 `python server.py -p 9902 -m /path/to/the/file.ckpt`, note that `-p port` needs to match the client_2 port
   - `python visualization`
-  - `rosbag play d*_split1.bag --clock --pause`, where split{id} is the n-th split of a longer sequence. The splits have some overlap between them.
+  - `rosbag play d*_split1.bag --clock --pause`, where split{n-th} is the n-th split of a longer sequence. The splits have some overlap between them. If your pc is powerful enough you might also want to try the full bags.
 
 At this point you should be able to see play the rosbag in the way you prefer.
 
@@ -144,3 +144,22 @@ The published topics, for each machine, are:
 - `machine_x/step1_pub`, the results of the first step of the network, read by the other machine
 - `machine_x/step2_pub`, the results of the second step of the network, read by the other machine
 - `machine_x/step3_pub`, the final results of `machine_x`
+
+The ROI message can be either used as "grountruth" box with the following structure:
+```
+ymin = ymin
+ymax = ymax
+ycenter = xmin
+xcenter = xmax
+```
+Or as a more general box where you specify the center and the height of the box. In that case a 3:4 aspect ratio is considered.
+```
+ymin = ymin
+ymax = ymax
+xcenter = x_center_of_the_bb
+ycenter = y_center_of_the_bb
+```
+
+You can also create your bag and provide your own data to the tool. To that end you can check the code available [here](https://github.com/eliabntt/RosbagFromCsv) that uses a csv with the needed information (image paths, bounding boxes, and camera info) to build the bags.
+
+Note that this is no different than running the inference manually, except for the fact that this runs at 4FPS and has the synchronization procedure enabled as explained in the paper.
