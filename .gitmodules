@@ -1,4 +1,4 @@
 [submodule "aircap"]
-	path = aircap
+	path = catkin_ws/src/aircap
 	url = https://github.com/robot-perception-group/AirCap.git
 	branch = realworld-airpose
