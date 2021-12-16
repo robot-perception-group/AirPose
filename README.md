@@ -15,27 +15,42 @@ Please clone the repository with the following
 _________
 
 Data can be freely accessed [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/).
-Please download the data, and untar it. Preprocess the synthetic data using
-```
-python copenet/src/copenet/scripts/prepare_aerialpeople_dataset.py data_directory_path
-```
+Please download the data, and untar it whenever necessary.
 
 _________
 
-To run the code of this repository you first need to download the data.
 The code was tested using `Python 3.8`.
 
-`SMPLX` code in this repo is a modified version of the official SMLX [implementation](https://github.com/vchoutas/smplx). Download the SMPLX model weights from [here](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=models_smplx_v1_1.zip) and put them in `copenet/src/copenet/data/smplx/models/smplx`. You need to register before being able to download the weights.
+`SMPLX` code in this repo is a modified version of the official SMLX [implementation](https://github.com/vchoutas/smplx). Download the SMPLX model weights from [here](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=models_smplx_v1_1.zip) and run the following
+
+```
+# from the download location
+unzip models_smplx_v1_1.zip -d models_smplx
+unzip models_smplx/models/smplx/smplx_npz.zip -d used_models
+rm models_smplx -r
+```
+
+Then copy the *content* of `used_models` (just created, with `SMPLX_{MALE,FEMALE,NEUTRAL}.npz` files) folder into `your_path/AirPose/copenet/src/copenet/data/smplx/models/smplx`.
+
+You need to register before being able to download the weights.
 
 Now, you may want to create a virtual environment. Please be sure your `pip` is updated.
 
 Install the necessary requirements with `pip install -r requirements.txt`. If you don't have a cuda compatible device, change the device to `cpu` in `copenet_real/src/copenet_real/config.py` and `copenet/src/copenet/config.py`.
 
-Download the Head and hands indices files form [here](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=smplx_mano_flame_correspondences.zip) and place them in `copenet/data`.
+Download the Head and hands indices files form [here](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=smplx_mano_flame_correspondences.zip) and place them in `copenet/data/smplx` (`MANO_SMPLX_vertex_ids.pkl` and `SMPL-X__FLAME_vertex_ids.npy`).
 
 ## Synthetic data training 
 
 The data to be used is `copenet_synthetic.tar.gz`
+
+### Preprocess
+To run the code of this repository you first need to preprocess the data using
+
+```
+# from AirPose folder
+python copenet/src/copenet/scripts/prepare_aerialpeople_dataset.py /absolute/path/copenet_synthetic
+```
 
 `cd AirPose/copenet/`
 
@@ -43,7 +58,7 @@ The data to be used is `copenet_synthetic.tar.gz`
 
 And code can be run by the following
 
-`python src/copenet/copenet_trainer.py --name=test_name --version=test_version --model=muhmr --datapath=path/location --log_dir=path/location/ --copenet_home= absolute path to the copenet directory --optional-params...`
+`python src/copenet/copenet_trainer.py --name=test_name --version=test_version --model=muhmr --datapath=/absolute/path/copenet_synthetic --log_dir=path/location/ --copenet_home= absolute path to the copenet directory --optional-params...`
 
 The `datapath` is the location of the training data.
 
