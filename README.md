@@ -36,7 +36,7 @@ You need to register before being able to download the weights.
 
 Now, you may want to create a virtual environment. Please be sure your `pip` is updated.
 
-Install the necessary requirements with `pip install -r requirements.txt`. If you don't have a cuda compatible device, change the device to `cpu` in `copenet_real/src/copenet_real/config.py` and `copenet/src/copenet/config.py`.
+Install the necessary requirements with `pip install -r requirements.txt`. If you don't have a cuda compatible device, change the device to `cpu` in `copenet_real/src/copenet_real/config.py` and `copenet/src/copenet/config.py`. Check out [this](https://stackoverflow.com/questions/65637222/runtimeerror-subtraction-the-operator-with-a-bool-tensor-is-not-supported) link to fix the runtime error `RuntimeError: Subtraction, the `-` operator, with a bool tensor is not supported` due to the `Torchgeometry` package.
 
 Download the Head and hands indices files form [here](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=smplx_mano_flame_correspondences.zip) and place them in `copenet/data/smplx` (`MANO_SMPLX_vertex_ids.pkl` and `SMPL-X__FLAME_vertex_ids.npy`).
 
