@@ -15,7 +15,10 @@ Please clone the repository with the following
 _________
 
 Data can be freely accessed [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/).
-Please download the data, and untar it.
+Please download the data, and untar it. Preprocess the synthetic data using
+```
+python copenet/src/copenet/scripts/prepare_aerialpeople_dataset.py data_directory_path
+```
 
 _________
 
