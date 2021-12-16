@@ -91,16 +91,17 @@ The data to be used is `copenet_dji.tar.gz`.
 
 Install the human body prior from [here](https://github.com/nghorbani/human_body_prior) and download its pretrained weights (version 2) from [here](https://smpl-x.is.tue.mpg.de/download.php). Set the `vposer_weights` variable in the `copenet_real/src/copenet_real/config.py` file to the absolute path of the downloaded weights. If you do NOT have a GPU please change `human_body_prior/tools/model_loader.py` line 68 from `state_dict = torch.load(trained_weigths_fname)['state_dict']` to `state_dict = torch.load(trained_weigths_fname, map_location=torch.device('cpu'))['state_dict']`
 
+**Note**: for the `hmr` model `pytorch-lightning<=1.2` is required. You might have to recheck requirements, or reinstall the requirements you can find in the main folder of this repo.
 
-And code can be run by the following
+Code can be run by the following
 
-`python src/copenet_real/copenet_trainer.py --name=test_name --version=test_version --model=muhmr --datapath=path/location --log_dir=path/location/ --resume_from_checkpoint=path to the pretrained checkpoint --copenet_home= absolute path to the copenet directory --optional-params...`
+```
+python src/copenet_real/copenet_trainer.py --name=test_name --version=test_version --model=muhmr --datapath=path/location --log_dir=path/location/ --resume_from_checkpoint=path to the pretrained checkpoint --copenet_home= absolute path to the copenet directory --optional-params...
+```
 
 The `datapath` is the location of the training data.
 
 `--model` specify the model type between `[hmr, copenet_twoview]` which corresponds to the Baseline, AirPose respectively.
-
-*Note*: for the `hmr` model `pytorch-lightning<=1.2` is required.
 
 The `--resume_from_checkpoint` is path to the pretrained checkpoint on the synthetic data. 
 
