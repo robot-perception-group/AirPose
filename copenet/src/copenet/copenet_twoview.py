@@ -181,8 +181,8 @@ class copenet_twoview(pl.LightningModule):
                 in_smpltrans0 = gt_smpltrans_rel0
                 in_smpltrans1 = gt_smpltrans_rel1
             elif self.hparams.smpltrans_noise_sigma is None:
-                in_smpltrans0 = torch.from_numpy(np.array([0,0,10])).float().expand(batch_size, -1).type_as(gt_smpltrans_rel0)
-                in_smpltrans1 = torch.from_numpy(np.array([0,0,10])).float().expand(batch_size, -1).type_as(gt_smpltrans_rel1)
+                in_smpltrans0 = torch.from_numpy(np.array([0,0,10])).float().expand(batch_size, -1).clone().type_as(gt_smpltrans_rel0)
+                in_smpltrans1 = torch.from_numpy(np.array([0,0,10])).float().expand(batch_size, -1).clone().type_as(gt_smpltrans_rel1)
             else:
                 in_smpltrans0, _ = add_noise_input_smpltrans(gt_smpltrans_rel0,self.hparams.smpltrans_noise_sigma)
                 in_smpltrans1, _ = add_noise_input_smpltrans(gt_smpltrans_rel1,self.hparams.smpltrans_noise_sigma)

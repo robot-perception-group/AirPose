@@ -142,7 +142,7 @@ class copenet_singleview(pl.LightningModule):
             if is_test and self.hparams.testdata.lower() == "aircapdata":
                 in_smpltrans = gt_smpltrans_rel
             elif self.hparams.smpltrans_noise_sigma is None:
-                in_smpltrans = torch.from_numpy(np.array([0,0,10])).float().expand(batch_size, -1).type_as(gt_smpltrans_rel)
+                in_smpltrans = torch.from_numpy(np.array([0,0,10])).float().expand(batch_size, -1).clone().type_as(gt_smpltrans_rel)
             else:
                 in_smpltrans, _ = add_noise_input_smpltrans(gt_smpltrans_rel,self.hparams.smpltrans_noise_sigma)
 
