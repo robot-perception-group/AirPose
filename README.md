@@ -116,7 +116,6 @@ After that you need to install the following dependencies:
 
 ```
 sudo add-apt-repository ppa:joseluisblancoc/mrpt-stable
-sudo apt install libmrpt-dev mrpt-apps
 ```
 
 Navigate to your `catkin_ws` folder (e.g. `AirPose/catkin_ws`) and run:
@@ -128,6 +127,7 @@ touch src/aircap/packages/optional/ptgrey_image_capture/Grab/CATKIN_IGNORE
 
 ### this applies to ros-melodic
 ```
+sudo apt install libmrpt-dev mrpt-apps
 cd catkin_ws/src/aircap
 git checkout realworld-airpose-melodic-backport
 cd ../../
@@ -137,7 +137,10 @@ sudo apt install -y ros-melodic-octomap-msgs ros-melodic-cv-camera ros-melodic-m
 ```
 
 ### this applies to ros-noetic
-`sudo apt install -y ros-noetic-octomap-msgs ros-noetic-cv-camera ros-noetic-marker-msgs ros-noetic-mrpt-msgs ros-noetic-octomap-ros`
+```
+sudo apt install libmrpt-poses-dev -y
+sudo apt install -y ros-noetic-octomap-msgs ros-noetic-cv-camera ros-noetic-marker-msgs ros-noetic-mrpt-msgs ros-noetic-octomap-ros
+```
 
 Then you can run `catkin_make` from the `catkin_ws` folder to build the whole workspace.
 
