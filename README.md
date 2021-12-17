@@ -124,11 +124,12 @@ touch src/aircap/packages/optional/ptgrey_image_capture/Grab/CATKIN_IGNORE
 ```
 
 ### this applies to ros-melodic
+
+Firstly, checkout the AirPose **branch** `ros-melodic`.
+
 ```
 sudo apt install libmrpt-dev mrpt-apps
-cd catkin_ws/src/aircap
-git checkout realworld-airpose-melodic-backport
-cd ../../
+cd /your/path/AirPose/catkin_ws
 touch src/aircap/packages/3rdparty/mrpt_bridge/CATKIN_IGNORE
 touch src/aircap/packages/3rdparty/pose_cov_ops/CATKIN_IGNORE
 sudo apt install -y ros-melodic-octomap-msgs ros-melodic-cv-camera ros-melodic-marker-msgs ros-melodic-mrpt-msgs ros-melodic-octomap-ros ros-melodic-mrpt-bridge
