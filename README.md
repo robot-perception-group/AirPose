@@ -132,7 +132,7 @@ sudo apt install libmrpt-dev mrpt-apps
 cd /your/path/AirPose/catkin_ws
 touch src/aircap/packages/3rdparty/mrpt_bridge/CATKIN_IGNORE
 touch src/aircap/packages/3rdparty/pose_cov_ops/CATKIN_IGNORE
-sudo apt install -y ros-melodic-octomap-msgs ros-melodic-cv-camera ros-melodic-marker-msgs ros-melodic-mrpt-msgs ros-melodic-octomap-ros ros-melodic-mrpt-bridge
+sudo apt install -y ros-melodic-octomap-msgs ros-melodic-cv-camera ros-melodic-marker-msgs ros-melodic-mrpt-msgs ros-melodic-octomap-ros ros-melodic-mrpt-bridge ros-melodic-mrpt1
 ```
 
 ### this applies to ros-noetic
