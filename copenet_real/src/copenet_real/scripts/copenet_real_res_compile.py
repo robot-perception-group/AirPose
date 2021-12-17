@@ -6,10 +6,10 @@ from torch.utils.data import DataLoader
 from pytorch_lightning import Trainer
 from tqdm import tqdm
 import pickle as pkl
-import os
+import os, sys; sys.path.append(os.path.dirname(os.path.abspath(__file__+"/..")))
 os.environ["PYOPENGL_PLATFORM"] = 'egl'
 
-from ..config import device
+from config import device
 
 from copenet_real.copenet_twoview import copenet_twoview
 from copenet_real.dsets import copenet_real
