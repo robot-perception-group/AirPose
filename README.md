@@ -127,7 +127,10 @@ touch src/aircap/packages/optional/ptgrey_image_capture/Grab/CATKIN_IGNORE
 
 Firstly, checkout the AirPose **branch** `ros-melodic`.
 
+Be *sure* to update the submodule (first command).
+
 ```
+git submodule update 
 sudo apt install libmrpt-dev mrpt-apps
 cd /your/path/AirPose/catkin_ws
 touch src/aircap/packages/3rdparty/mrpt_bridge/CATKIN_IGNORE
