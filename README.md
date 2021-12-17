@@ -38,7 +38,7 @@ Now, you may want to create a virtual environment. Please be sure your `pip` is 
 
 Install the necessary requirements with `pip install -r requirements.txt`. If you don't have a cuda compatible device, change the device to `cpu` in `copenet_real/src/copenet_real/config.py` and `copenet/src/copenet/config.py`. Check out [this](https://stackoverflow.com/questions/65637222/runtimeerror-subtraction-the-operator-with-a-bool-tensor-is-not-supported) link to fix the runtime error `RuntimeError: Subtraction, the `-` operator, with a bool tensor is not supported` due to the `Torchgeometry` package.
 
-Download the Head and hands indices files form [here](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=smplx_mano_flame_correspondences.zip) and place them in `copenet/data/smplx` (`MANO_SMPLX_vertex_ids.pkl` and `SMPL-X__FLAME_vertex_ids.npy`).
+Download the Head and hands indices files form [here](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=smplx_mano_flame_correspondences.zip) and place them in `AirPose/copenet/src/copenet/data/smplx` (`MANO_SMPLX_vertex_ids.pkl` and `SMPL-X__FLAME_vertex_ids.npy`).
 
 ## Synthetic data training 
 
@@ -108,7 +108,7 @@ The `--resume_from_checkpoint` is path to the pretrained checkpoint on the synth
 
 ## Testing the client-server synchronization mechanism
 
-To this end you need to install ros-{melodic,noetic} in your pc.
+To this end you need to install `ros-{melodic,noetic}` in your pc (`Ubuntu 18.04-20.04`).
 
 Please follow the instructions that you can find [here](http://wiki.ros.org/Installation/Ubuntu)
 
@@ -138,8 +138,8 @@ sudo apt install -y ros-melodic-octomap-msgs ros-melodic-cv-camera ros-melodic-m
 
 ### this applies to ros-noetic
 ```
-sudo apt install libmrpt-poses-dev -y
-sudo apt install -y ros-noetic-octomap-msgs ros-noetic-cv-camera ros-noetic-marker-msgs ros-noetic-mrpt-msgs ros-noetic-octomap-ros
+sudo apt install libmrpt-poses-dev libmrpt-obs-dev libmrpt-graphs-dev libmrpt-maps-dev libmrpt-slam-dev -y
+sudo apt install -y ros-noetic-octomap-msgs ros-noetic-cv-camera ros-noetic-marker-msgs ros-noetic-mrpt-msgs ros-noetic-octomap-ros ros-noetic-mrpt2
 ```
 
 Then you can run `catkin_make` from the `catkin_ws` folder to build the whole workspace.
