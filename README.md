@@ -58,7 +58,7 @@ python copenet/src/copenet/scripts/prepare_aerialpeople_dataset.py /absolute/pat
 
 And code can be run by the following
 
-`python src/copenet/copenet_trainer.py --name=test_name --version=test_version --model=muhmr --datapath=/absolute/path/copenet_synthetic --log_dir=path/location/ --copenet_home= absolute path to the copenet directory --optional-params...`
+`python src/copenet/copenet_trainer.py --name=test_name --version=test_version --model=muhmr --datapath=/absolute/path/copenet_synthetic --log_dir=path/location/ --copenet_home=/absolute/path/AirPose/copenet --optional-params...`
 
 The `datapath` is the location of the training data.
 
@@ -96,7 +96,7 @@ Install the human body prior from [here](https://github.com/nghorbani/human_body
 Code can be run by the following
 
 ```
-python src/copenet_real/copenet_trainer.py --name=test_name --version=test_version --model=muhmr --datapath=path/location --log_dir=path/location/ --resume_from_checkpoint=path to the pretrained checkpoint --copenet_home= absolute path to the copenet directory --optional-params...
+python src/copenet_real/copenet_trainer.py --name=test_name --version=test_version --model=muhmr --datapath=path/location --log_dir=path/location/ --resume_from_checkpoint=path to the pretrained checkpoint --copenet_home=/absolute/path/AirPose/copenet --optional-params...
 ```
 
 The `datapath` is the location of the training data.
