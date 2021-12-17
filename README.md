@@ -174,8 +174,11 @@ In separated terminals (with the workspace sourced) run:
      - run `pip install meshcat rospkg`
      - Change folder to `cd AirPose/catkin_ws/src/aircap/packages/flight/airpose_server` and run `pip install -e smplx`.
      - The visualization node can then be run with `python copenet_rosViz.py /machine_1/step3_pub /absolute/path/to/smplx/models` or `python copenet_rosViz.py /machine_2/step3_pub /absolute/path/to/smplx/models`. The path is most likely `/path/to/AirPose/copenet/src/copenet/data/smplx`
-- `rosbag play d*_split1.bag --clock --pause`, where split{n-th} is the n-th split of a longer sequence. The splits have some overlap between them. If your pc is powerful enough you might also want to try the full bags.
-
+- You can either use the complete bag files with
+  `rosbag play d*_BGR.bag --clock --pause`
+  
+  or create smaller (overlapping) bags using the `split.zsh` script that you find in both folders. This split will create 5 split from each bag. Afterwards, simply run `rosbag play d*_split1.bag --clock --pause`, where split{n-th} is the n-th split of the longer sequence. The splits have some overlap between them.
+  
 At this point you should be able to see play the rosbag in the way you prefer.
 
 The published topics, for each machine, are:
