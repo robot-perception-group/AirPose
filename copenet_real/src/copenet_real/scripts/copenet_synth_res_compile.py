@@ -8,9 +8,9 @@ from tqdm import tqdm
 import pickle as pkl
 import os
 import yaml
-import sys
+import os, sys; sys.path.append(os.path.dirname(os.path.abspath(__file__+"/..")))
 os.environ["PYOPENGL_PLATFORM"] = 'egl'
-from copenet_real.config import device
+from config import device
 
 from copenet.copenet_twoview import copenet_twoview
 from copenet_real.dsets import aerialpeople

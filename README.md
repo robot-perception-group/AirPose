@@ -47,7 +47,7 @@ Now, you may want to create a virtual environment. Please be sure your `pip` is 
 
 Install the necessary requirements with `pip install -r requirements.txt`. If you don't have a cuda compatible device, change the device to `cpu` in `copenet_real/src/copenet_real/config.py` and `copenet/src/copenet/config.py`. Check out [this](https://stackoverflow.com/questions/65637222/runtimeerror-subtraction-the-operator-with-a-bool-tensor-is-not-supported) link to fix the runtime error `RuntimeError: Subtraction, the `-` operator, with a bool tensor is not supported` due to the `Torchgeometry` package.
 
-Download the Head and hands indices files form [here](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=smplx_mano_flame_correspondences.zip) and place them in `copenet/data/smplx` (`MANO_SMPLX_vertex_ids.pkl` and `SMPL-X__FLAME_vertex_ids.npy`).
+Download the Head and hands indices files form [here](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=smplx_mano_flame_correspondences.zip) and place them in `AirPose/copenet/src/copenet/data/smplx` (`MANO_SMPLX_vertex_ids.pkl` and `SMPL-X__FLAME_vertex_ids.npy`).
 
 ## Synthetic data training 
 
@@ -67,7 +67,7 @@ python copenet/src/copenet/scripts/prepare_aerialpeople_dataset.py /absolute/pat
 
 And code can be run by the following
 
-`python src/copenet/copenet_trainer.py --name=test_name --version=test_version --model=muhmr --datapath=/absolute/path/copenet_synthetic --log_dir=path/location/ --copenet_home= absolute path to the copenet directory --optional-params...`
+`python src/copenet/copenet_trainer.py --name=test_name --version=test_version --model=muhmr --datapath=/absolute/path/copenet_synthetic --log_dir=path/location/ --copenet_home=/absolute/path/AirPose/copenet --optional-params...`
 
 The `datapath` is the location of the training data.
 
@@ -78,18 +78,16 @@ Logs will be saved in `$log_dir/$name/$version/`
 `optional-params` is to be substituted with the `copenet_trainer` available params as weights, lr..
 
 ## Evaluation on the synthetic data
+
+For model type `[muhmr, copenet_twoview]`.
+
+For model type `[hmr, copenet_singleview]`, the provided checkpoint is trained with an older pytorch lightning version (<=1.2). If you want to use them, install pytorch-lightning<=1.2. We provide the precalculated outputs on the syntehtic data using these checkpoints. To generate the metrics, run
+
 ```
 cd AirPose/copenet_real/src/copenet_real
 
 python src/copenet_real/scripts/copenet_synth_res_compile.py "model type" "checkpoint Path" "/path to the dataset"
 ```
-For model type `[muhmr, copenet_twoview]`.
-
-For model type `[hmr, copenet_singleview]`, the provided checkpoint is trained with an older pytorch lightning version (<1.2). If you want to use them, install pytorch-lightning<=1.2. We provide the precalculated outputs on the syntehtic data using these checkpoints. To generate the metrics, run
-```
-python src/copenet_real/scripts/copenet_synth_res_compile.py "model type" "checkpoint directory path" "/path to the dataset"
-``` 
-
 
 ## Fine-tuning on real dataset
 The data to be used is `copenet_dji.tar.gz`.
@@ -98,14 +96,14 @@ The data to be used is `copenet_dji.tar.gz`.
 
 `pip install -e .`
 
-Install the human body prior from [here](https://github.com/nghorbani/human_body_prior) and download its pretrained weights (version 2) from [here](https://smpl-x.is.tue.mpg.de/download.php). Set the `vposer_weights` variable in the `copenet_real/src/copenet_real/config.py` file to the absolute path of the downloaded weights. If you do NOT have a GPU please change `human_body_prior/tools/model_loader.py` line 68 from `state_dict = torch.load(trained_weigths_fname)['state_dict']` to `state_dict = torch.load(trained_weigths_fname, map_location=torch.device('cpu'))['state_dict']`
+Install the human body prior from [here](https://github.com/nghorbani/human_body_prior) and download its pretrained weights (version 2) from [here](https://smpl-x.is.tue.mpg.de/download.php). Set the `vposer_weights` variable in the `.../AirPose/copenet_real/src/copenet_real/config.py` file to the absolute path of the downloaded weights (e.g. `/home/user/Downloads/V02_05`). If you do NOT have a GPU please change `human_body_prior/tools/model_loader.py` line **68** from `state_dict = torch.load(trained_weigths_fname)['state_dict']` to `state_dict = torch.load(trained_weigths_fname, map_location=torch.device('cpu'))['state_dict']`
 
 **Note**: for the `hmr` (Baseline) model `pytorch-lightning<=1.2` is required. You might have to recheck requirements, or reinstall the requirements you can find in the main folder of this repo.
 
 Code can be run by the following
 
 ```
-python src/copenet_real/copenet_trainer.py --name=test_name --version=test_version --model=muhmr --datapath=path/location --log_dir=path/location/ --resume_from_checkpoint=path to the pretrained checkpoint --copenet_home= absolute path to the copenet directory --optional-params...
+python src/copenet_real/copenet_trainer.py --name=test_name --version=test_version --model=hmr --datapath=path/location --log_dir=path/location/ --resume_from_checkpoint=/path/to/checkpoint --copenet_home=/absolute/path/AirPose/copenet --optional-params...
 ```
 
 The `datapath` is the location of the training data.
@@ -116,15 +114,23 @@ The `--resume_from_checkpoint` is path to the pretrained checkpoint on the synth
 
 ## Evaluation on real data
 Following code will generate the plots comparing the results of the baseline method, AirPose and AirPose+ on the real data.
-```python
-python copenet_real_data/scripts/bundle_adj.py path_to_the_real_dataset path_to_the_SMPLX_neutral_npz_file path_to_vposer_checkpoint path_to_the_hmr_checkpoint_directory path_to_the_airpose_precalculated_results_pkl_file path_to_the_SMPLX_to_j14_mapping_pkl_file type_of_data(train/test) 
+```
+python copenet_real_data/scripts/bundle_adj.py "path_to_the_real_dataset" "path_to_the_SMPLX_neutral_npz_file path_to_vposer_checkpoint" "path_to_the_hmr_checkpoint_directory" "path_to_the_airpose_precalculated_res_on_realdata_pkl" "path_to_the_SMPLX_to_j14_mapping_pkl_file" "type_of_data(train/test)" 
 
 ```
-
+The evaluation code above needs precalculated results on the real data which are provided with the dataset. If you want to calculate them yourself, run the following code and save the variable `outputs` in a pkl file when a breakpoint is hit. The pkl files provided with the data are generated in the same way.
+For `AirPose`
+```
+python copenet_real/src/copenet_real/scripts/copenet_real_res_compile.py "checkpoint Path" "/path to the dataset"
+```
+For `Baseline`
+```
+python copenet_real/src/copenet_real/scripts/hmr_real_res_compile.py "checkpoint Path" "/path to the dataset"
+```
 
 ## Testing the client-server synchronization mechanism
 
-To this end you need to install ros-{melodic,noetic} in your pc.
+To this end you need to install `ros-{melodic,noetic}` in your pc (`Ubuntu 18.04-20.04`).
 
 Please follow the instructions that you can find [here](http://wiki.ros.org/Installation/Ubuntu)
 
@@ -132,7 +138,6 @@ After that you need to install the following dependencies:
 
 ```
 sudo add-apt-repository ppa:joseluisblancoc/mrpt-stable
-sudo apt install libmrpt-dev mrpt-apps
 ```
 
 Navigate to your `catkin_ws` folder (e.g. `AirPose/catkin_ws`) and run:
@@ -143,17 +148,25 @@ touch src/aircap/packages/optional/ptgrey_image_capture/Grab/CATKIN_IGNORE
 ```
 
 ### this applies to ros-melodic
+
+Firstly, checkout the AirPose **branch** `ros-melodic`.
+
+Be *sure* to update the submodule (first command).
+
 ```
-cd catkin_ws/src/aircap
-git checkout realworld-airpose-melodic-backport
-cd ../../
+git submodule update 
+sudo apt install libmrpt-dev mrpt-apps
+cd /your/path/AirPose/catkin_ws
 touch src/aircap/packages/3rdparty/mrpt_bridge/CATKIN_IGNORE
 touch src/aircap/packages/3rdparty/pose_cov_ops/CATKIN_IGNORE
-sudo apt install -y ros-melodic-octomap-msgs ros-melodic-cv-camera ros-melodic-marker-msgs ros-melodic-mrpt-msgs ros-melodic-octomap-ros ros-melodic-mrpt-bridge
+sudo apt install -y ros-melodic-octomap-msgs ros-melodic-cv-camera ros-melodic-marker-msgs ros-melodic-mrpt-msgs ros-melodic-octomap-ros ros-melodic-mrpt-bridge ros-melodic-mrpt1
 ```
 
 ### this applies to ros-noetic
-`sudo apt install -y ros-noetic-octomap-msgs ros-noetic-cv-camera ros-noetic-marker-msgs ros-noetic-mrpt-msgs ros-noetic-octomap-ros`
+```
+sudo apt install libmrpt-poses-dev libmrpt-obs-dev libmrpt-graphs-dev libmrpt-maps-dev libmrpt-slam-dev -y
+sudo apt install -y ros-noetic-octomap-msgs ros-noetic-cv-camera ros-noetic-marker-msgs ros-noetic-mrpt-msgs ros-noetic-octomap-ros ros-noetic-mrpt2
+```
 
 Then you can run `catkin_make` from the `catkin_ws` folder to build the whole workspace.
 
@@ -185,8 +198,11 @@ In separated terminals (with the workspace sourced) run:
      - run `pip install meshcat rospkg`
      - Change folder to `cd AirPose/catkin_ws/src/aircap/packages/flight/airpose_server` and run `pip install -e smplx`.
      - The visualization node can then be run with `python copenet_rosViz.py /machine_1/step3_pub /absolute/path/to/smplx/models` or `python copenet_rosViz.py /machine_2/step3_pub /absolute/path/to/smplx/models`. The path is most likely `/path/to/AirPose/copenet/src/copenet/data/smplx`
-- `rosbag play d*_split1.bag --clock --pause`, where split{n-th} is the n-th split of a longer sequence. The splits have some overlap between them. If your pc is powerful enough you might also want to try the full bags.
-
+- You can either use the complete bag files with
+  `rosbag play d*_BGR.bag --clock --pause`
+  
+  or create smaller (overlapping) bags using the `split.zsh` script that you find in both folders. This split will create 5 split from each bag. Afterwards, simply run `rosbag play d*_split1.bag --clock --pause`, where split{n-th} is the n-th split of the longer sequence. The splits have some overlap between them.
+  
 At this point you should be able to see play the rosbag in the way you prefer.
 
 The published topics, for each machine, are:
