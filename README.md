@@ -15,8 +15,17 @@ Please clone the repository with the following
 _________
 
 Data can be freely accessed [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/).
-Please download the data, and untar it whenever necessary.
+Please download the data, and untar it whenever necessary. Content details are following:
 
+- copenet_synthetic_data.tar.gz - Synthetic dataset
+- copenet_dji_real_data.tar.gz - real dataset
+- hmr_synthetic.tar.gz - Baseline pretrained checkpoint on synthetic data and pkl files for precalculated results
+- copenet_singleview_ckpt.zip - Baseline+Fullcam pretrained checkpoint on synthetic data and pkl files for precalculated results
+- muhmr_synthetic.tar.gz - Baseline+Multiview pretrained checkpoint on synthetic data and pkl files for precalculated results
+- copenet_twoview_synthetic_ckpt.tar.gz - AirPose pretrained checkpoint on synthetic data and pkl files for precalculated results
+- hmr_real_ckpt.zip - Baseline finetuned checkpoint on real data and pkl files for precalculated results
+- copenet_twoview_real_ckpt.zip - AirPose finetuned checkpoint on real data and pkl files for precalculated results
+- SMPLX_to_J14.pkl - Mapping from SMPLX joints to the 14 joints format of openpose. It is used in the method AirPose+.
 _________
 
 The code was tested using `Python 3.8`.
@@ -91,7 +100,7 @@ The data to be used is `copenet_dji.tar.gz`.
 
 Install the human body prior from [here](https://github.com/nghorbani/human_body_prior) and download its pretrained weights (version 2) from [here](https://smpl-x.is.tue.mpg.de/download.php). Set the `vposer_weights` variable in the `copenet_real/src/copenet_real/config.py` file to the absolute path of the downloaded weights. If you do NOT have a GPU please change `human_body_prior/tools/model_loader.py` line 68 from `state_dict = torch.load(trained_weigths_fname)['state_dict']` to `state_dict = torch.load(trained_weigths_fname, map_location=torch.device('cpu'))['state_dict']`
 
-**Note**: for the `hmr` model `pytorch-lightning<=1.2` is required. You might have to recheck requirements, or reinstall the requirements you can find in the main folder of this repo.
+**Note**: for the `hmr` (Baseline) model `pytorch-lightning<=1.2` is required. You might have to recheck requirements, or reinstall the requirements you can find in the main folder of this repo.
 
 Code can be run by the following
 
@@ -104,6 +113,13 @@ The `datapath` is the location of the training data.
 `--model` specify the model type between `[hmr, copenet_twoview]` which corresponds to the Baseline, AirPose respectively.
 
 The `--resume_from_checkpoint` is path to the pretrained checkpoint on the synthetic data. 
+
+## Evaluation on real data
+Following code will generate the plots comparing the results of the baseline method, AirPose and AirPose+ on the real data.
+```python
+python copenet_real_data/scripts/bundle_adj.py path_to_the_real_dataset path_to_the_SMPLX_neutral_npz_file path_to_vposer_checkpoint path_to_the_hmr_checkpoint_directory path_to_the_airpose_precalculated_results_pkl_file path_to_the_SMPLX_to_j14_mapping_pkl_file type_of_data(train/test) 
+
+```
 
 
 ## Testing the client-server synchronization mechanism

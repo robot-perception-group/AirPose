@@ -10,7 +10,7 @@ import os
 import yaml
 import sys
 os.environ["PYOPENGL_PLATFORM"] = 'egl'
-from ..config import device
+from copenet_real.config import device
 
 from copenet.copenet_twoview import copenet_twoview
 from copenet_real.dsets import aerialpeople
@@ -32,10 +32,7 @@ datapath = sys.argv[3]
 trainer = Trainer(gpus=1)
 # create Network
 
-############## added later #################
-# issue with new PL model weight loading
-# use version <1.2
-###############################################
+
 if model_type == "copenet_twoview":
         net = copenet_twoview.load_from_checkpoint(checkpoint_path=ckpt_path)
 elif model_type == "muhmr":

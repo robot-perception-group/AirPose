@@ -11,7 +11,7 @@ import sys
 import yaml
 os.environ["PYOPENGL_PLATFORM"] = 'egl'
 
-from ..config import device
+from copenet_real.config import device
 
 from copenet.hmr import hmr
 from copenet.copenet_singleview import copenet_singleview
