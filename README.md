@@ -84,7 +84,7 @@ For model type `[muhmr, copenet_twoview]`.
 For model type `[hmr, copenet_singleview]`, the provided checkpoint is trained with an older pytorch lightning version (<=1.2). If you want to use them, install pytorch-lightning<=1.2. We provide the precalculated outputs on the syntehtic data using these checkpoints. To generate the metrics, run
 
 ```
-cd AirPose/copenet_real/src/copenet_real
+cd AirPose/copenet_real
 
 python src/copenet_real/scripts/copenet_synth_res_compile.py "model type" "checkpoint Path" "/path to the dataset"
 ```
