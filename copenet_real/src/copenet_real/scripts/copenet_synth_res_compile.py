@@ -29,7 +29,11 @@ datapath = sys.argv[3]
 # model_type = ckpt_path.split("/")[-4]
 
 # create trainer
-trainer = Trainer(gpus=1)
+if device == "gpu":
+	trainer = Trainer(gpu=1)
+else:
+	trainer = Trainer()
+
 # create Network
 
 
