@@ -11,7 +11,7 @@ import sys
 import yaml
 os.environ["PYOPENGL_PLATFORM"] = 'egl'
 
-from copenet_real.config import device
+from copenet.config import device
 
 from copenet.hmr import hmr
 from copenet.copenet_singleview import copenet_singleview
@@ -20,6 +20,7 @@ from copenet_real.dsets import aerialpeople
 modeltype = sys.argv[1]
 fname = sys.argv[2]
 datapath = sys.argv[3]
+smplx_path = sys.argv[4]
 
 # model = sys.argv[1]
 # ckpt_path = sys.argv[2]
@@ -97,9 +98,9 @@ import os
 import torch
 import numpy as np
 
-smplx = SMPLX(os.path.join("/is/ps3/nsaini/projects/copenet","src/copenet/data/smplx/models/smplx"),
-                         batch_size=1,
-                         create_transl=False)
+smplx = SMPLX(smplx_path,
+                batch_size=4,
+                create_transl=False).to(device).eval()
 
 img_res = [1920,1080]
 synth_focallen = [1475,1475]
@@ -147,10 +148,6 @@ pred_vertices_cam0_test_wrt_origin,pred_j3d_cam0_test_wrt_origin,pred_orient0_wr
         = transform_smpl(torch.inverse(test_extr0[begin*batch_size:batch_size*(end-begin)]),pred_vertices_cam0_test,pred_j3d_cam0_test,pred_rotmat0_test[begin*batch_size:batch_size*(end-begin),1,:3,:3],pred_smpltrans0_test)
 pred_vertices_cam1_test_wrt_origin,pred_j3d_cam1_test_wrt_origin,pred_orient1_wrt_origin, pred_trans1_wrt_origin \
         = transform_smpl(torch.inverse(test_extr1[begin*batch_size:batch_size*(end-begin)]),pred_vertices_cam1_test,pred_j3d_cam1_test,pred_rotmat1_test[begin*batch_size:batch_size*(end-begin),1,:3,:3],pred_smpltrans1_test)
-
-smplx = SMPLX(os.path.join("/is/ps3/nsaini/projects/copenet","src/copenet/data/smplx/models/smplx"),
-                         batch_size=4,
-                         create_transl=False).to(device).eval()
 
 joints3d = [] 
 for i in tqdm(range(pred_rotmat1_test.shape[0])):

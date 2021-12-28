@@ -8,10 +8,10 @@ from tqdm import tqdm
 import pickle as pkl
 import os
 import yaml
-import os, sys; sys.path.append(os.path.dirname(os.path.abspath(__file__+"/..")))
+import os
+import sys
 os.environ["PYOPENGL_PLATFORM"] = 'egl'
-from config import device
-
+from copenet.config import device
 from copenet.copenet_twoview import copenet_twoview
 from copenet_real.dsets import aerialpeople
 from copenet.muhmr import muhmr
@@ -29,8 +29,8 @@ datapath = sys.argv[3]
 # model_type = ckpt_path.split("/")[-4]
 
 # create trainer
-if device == "gpu":
-	trainer = Trainer(gpu=1)
+if device == "cuda":
+	trainer = Trainer(gpus=1)
 else:
 	trainer = Trainer()
 
