@@ -49,22 +49,22 @@ train_ds, test_ds = aerialpeople.get_aerialpeople_seqsplit(datapath)
 train_ds_1, test_ds_1 = aerialpeople.get_aerialpeople_seqsplit(datapath,first_cam=1)
 
 tst_dl = DataLoader(test_ds, batch_size=30,
-                            num_workers=40,
+                            num_workers=os.cpu_count()-1,
                             pin_memory=True,
                             shuffle=False,
                             drop_last=True)
 tst_dl1 = DataLoader(test_ds_1, batch_size=30,
-                            num_workers=40,
+                            num_workers=os.cpu_count()-1,
                             pin_memory=True,
                             shuffle=False,
                             drop_last=True)
 trn_dl = DataLoader(train_ds, batch_size=30,
-                            num_workers=40,
+                            num_workers=os.cpu_count()-1,
                             pin_memory=True,
                             shuffle=False,
                             drop_last=True)
 trn_dl1 = DataLoader(train_ds_1, batch_size=30,
-                            num_workers=40,
+                            num_workers=os.cpu_count()-1,
                             pin_memory=True,
                             shuffle=False,
                             drop_last=True)

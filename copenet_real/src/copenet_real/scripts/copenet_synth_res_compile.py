@@ -42,16 +42,19 @@ if model_type == "copenet_twoview":
 elif model_type == "muhmr":
         net = muhmr.load_from_checkpoint(checkpoint_path=ckpt_path)
 
+# set the copenet home
+net.hparams.copenet_home = os.path.join(os.path.dirname(os.path.abspath(__file__)),"../../../../copenet")
+
 # create dataset and dataloader
 train_ds, test_ds = aerialpeople.get_aerialpeople_seqsplit(datapath)
 
 tst_dl = DataLoader(test_ds, batch_size=30,
-                            num_workers=40,
+                            num_workers=os.cpu_count()-1,
                             pin_memory=True,
                             shuffle=False,
                             drop_last=True)
 trn_dl = DataLoader(train_ds, batch_size=30,
-                            num_workers=40,
+                            num_workers=os.cpu_count()-1,
                             pin_memory=True,
                             shuffle=False,
                             drop_last=True)
