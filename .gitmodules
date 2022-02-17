@@ -2,3 +2,9 @@
 	path = catkin_ws/src/aircap
 	url = https://github.com/robot-perception-group/AirCap.git
 	branch = realworld-airpose
+[submodule "copenet/src/copenet/smplx"]
+	path = copenet/src/copenet/smplx
+	url = https://github.com/nitin-ppnp/smplx.git
+[submodule "copenet_real/src/copenet_real/smplx"]
+	path = copenet_real/src/copenet_real/smplx
+	url = https://github.com/nitin-ppnp/smplx.git

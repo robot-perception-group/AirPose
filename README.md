@@ -45,7 +45,11 @@ You need to register before being able to download the weights.
 
 Now, you may want to create a virtual environment. Please be sure your `pip` is updated.
 
-Install the necessary requirements with `pip install -r requirements.txt`. If you don't have a cuda compatible device, change the device to `cpu` in `copenet_real/src/copenet_real/config.py` and `copenet/src/copenet/config.py`. Check out [this](https://stackoverflow.com/questions/65637222/runtimeerror-subtraction-the-operator-with-a-bool-tensor-is-not-supported) link to fix the runtime error `RuntimeError: Subtraction, the `-` operator, with a bool tensor is not supported` due to the `Torchgeometry` package.
+Install the necessary requirements with `pip install -r requirements.txt`. If you don't have a cuda compatible device, change the device to `cpu` in `copenet_real/src/copenet_real/config.py` and `copenet/src/copenet/config.py`. 
+
+In those files (`copenet_real/src/copenet_real/config.py` and `copenet/src/copenet/config.py`) change `LOCAL_DATA_DIR` to `/global/path/AirPose/copenet/src/copenet/data"`.
+
+Check out [this](https://stackoverflow.com/questions/65637222/runtimeerror-subtraction-the-operator-with-a-bool-tensor-is-not-supported) link to fix the runtime error `RuntimeError: Subtraction, the `-` operator, with a bool tensor is not supported` due to the `Torchgeometry` package.
 
 Install the copenet and copenet_real packages in this repo
 ```
@@ -53,11 +57,11 @@ pip install -e copenet
 pip install -e copenet_real
 ```
 
-Download the Head and hands indices files form [here](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=smplx_mano_flame_correspondences.zip) and place them in `AirPose/copenet/src/copenet/data/smplx` (`MANO_SMPLX_vertex_ids.pkl` and `SMPL-X__FLAME_vertex_ids.npy`).
+Download the head and hands indices files form [here](https://download.is.tue.mpg.de/download.php?domain=smplx&sfile=smplx_mano_flame_correspondences.zip) and place them in `AirPose/copenet/src/copenet/data/smplx` (`MANO_SMPLX_vertex_ids.pkl` and `SMPL-X__FLAME_vertex_ids.npy`).
 
 ## Synthetic data training 
 
-The data to be used is `copenet_synthetic.tar.gz`
+The data to be used is `copenet_synthetic_data.tar.gz` ([here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/files/?p=%2Fcopenet_synthetic_data.tar.gz))
 
 ### Preprocess
 To run the code of this repository you first need to preprocess the data using
@@ -67,9 +71,7 @@ To run the code of this repository you first need to preprocess the data using
 python copenet/src/copenet/scripts/prepare_aerialpeople_dataset.py /absolute/path/copenet_synthetic
 ```
 
-`cd AirPose/copenet/`
-
-And code can be run by the following
+And code can be run by the following (from `AirPose/copenet` folder):
 
 `python src/copenet/copenet_trainer.py --name=test_name --version=test_version --model=muhmr --datapath=/absolute/path/copenet_synthetic --log_dir=path/location/ --copenet_home=/absolute/path/AirPose/copenet --optional-params...`
 
@@ -91,7 +93,11 @@ cd AirPose/copenet_real
 python src/copenet_real/scripts/copenet_synth_res_compile.py "model type" "checkpoint Path" "/path to the dataset"
 ```
 
-For model type `[hmr, copenet_singleview]`, the provided checkpoint is trained with an older pytorch lightning version (<=1.2). If you want to use them, install pytorch-lightning<=1.2. We provide the precalculated outputs on the syntehtic data using these checkpoints. To generate the metrics, run
+For model type `[hmr, copenet_singleview]`, the provided checkpoint is trained with an older pytorch lightning version (<=1.2). If you want to use them, install pytorch-lightning<=1.2. 
+
+We provide the precalculated outputs on the syntehtic data using these checkpoints. 
+
+To generate the metrics, run
 ```
 cd AirPose/copenet_real
 
@@ -99,15 +105,13 @@ python src/copenet_real/scripts/hmr_synth_res_compile.py "model type" "precalcul
 ```
 
 ## Fine-tuning on real dataset
-The data to be used is `copenet_dji.tar.gz`.
-
-`cd AirPose/copenet_real/`
+The data to be used is `copenet_dji_real_data.tar.gz`([here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/files/?p=%2Fcopenet_dji_real_data.tar.gz)).
 
 Install the human body prior from [here](https://github.com/nghorbani/human_body_prior) and download its pretrained weights (version 2) from [here](https://smpl-x.is.tue.mpg.de/download.php). Set the `vposer_weights` variable in the `.../AirPose/copenet_real/src/copenet_real/config.py` file to the absolute path of the downloaded weights (e.g. `/home/user/Downloads/V02_05`). If you do NOT have a GPU please change `human_body_prior/tools/model_loader.py` line **68** from `state_dict = torch.load(trained_weigths_fname)['state_dict']` to `state_dict = torch.load(trained_weigths_fname, map_location=torch.device('cpu'))['state_dict']`
 
 **Note**: for the `hmr` (Baseline) model `pytorch-lightning<=1.2` is required. You might have to recheck requirements, or reinstall the requirements you can find in the main folder of this repo.
 
-Code can be run by the following
+Code can be run by the following (from `AirPose/copenet_real/` folder)
 
 ```
 python src/copenet_real/copenet_trainer.py --name=test_name --version=test_version --model=hmr --datapath=path/location --log_dir=path/location/ --resume_from_checkpoint=/path/to/checkpoint --copenet_home=/absolute/path/AirPose/copenet --optional-params...
@@ -120,11 +124,30 @@ The `datapath` is the location of the training data.
 The `--resume_from_checkpoint` is path to the pretrained checkpoint on the synthetic data. 
 
 ## Evaluation on real data
-Following code will generate the plots comparing the results of the baseline method, AirPose and AirPose+ on the real data.
-```
-python copenet_real_data/scripts/bundle_adj.py "path_to_the_real_dataset" "path_to_the_SMPLX_neutral_npz_file path_to_vposer_checkpoint" "path_to_the_hmr_checkpoint_directory" "path_to_the_airpose_precalculated_res_on_realdata_pkl" "path_to_the_SMPLX_to_j14_mapping_pkl_file" "type_of_data(train/test)" 
+
+Install `graphviz` dependency with `pip install graphviz` in the same virtual environment.
+
+Following code will generate the plots comparing the results of the baseline method, AirPose and AirPose+ on the real data. 
+
+This can be run from `AirPose` folder.
 
 ```
+python copenet_real_data/scripts/bundle_adj.py "path_to_the_real_dataset" \\
+"path_to_the_SMPLX_neutral_npz_file" \\
+"path_to_vposer_folder" \\
+"path_to_the_hmr_checkpoint_directory" \\
+"path_to_the_airpose_precalculated_res_on_realdata_pkl" \\
+"path_to_the_SMPLX_to_j14_mapping_pkl_file" \\
+"type_of_data(train/test)" 
+
+```
+Note that:
+- The `SMPLX_neutral_npz_file` should be in `your_path/AirPose/copenet/src/copenet/data/smplx/models/smplx`.
+- The `vposer_folder` should be in the `vposer_weights` folder that you downloaded to finetune on the real data
+- The hmr checkpoint is either being generated by you or downloaded from [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/files/?p=%2Fhmr_real_ckpt.zip)
+- The `precalculated_res_on_realdata_pkl` can be found within the same archive you downloaded above. More on how to compute them yourself below.
+- The `SMPLX_to_j14_pkl` can be found [here](https://keeper.mpdl.mpg.de/d/1cae0814c4474f5a8e19/files/?p=%2FSMPLX_to_J14.pkl).
+
 The evaluation code above needs precalculated results on the real data which are provided with the dataset. If you want to calculate them yourself, run the following code and save the variable `outputs` in a pkl file when a breakpoint is hit. The pkl files provided with the data are generated in the same way.
 For `AirPose`
 ```

@@ -4,3 +4,5 @@ __pycache__
 .idea
 
 lightning_logs/
+*.pkl
+*.h5
